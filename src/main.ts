@@ -1,5 +1,9 @@
+import { Config } from './config';
+import { Discovery } from './discovery';
+
 export const start = () => {
-  console.log('hell-o');
+  const config = new Config();
+  const discovery = new Discovery(config);
 };
 
 start();

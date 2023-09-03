@@ -1,16 +1,16 @@
-import { DeviceData } from '../device/device-data';
+import { DiscoveryData } from './discovery-data';
 
 export class DiscoveredList {
-  private readonly _map = new Map<number, DeviceData>();
+  private readonly _map = new Map<number, DiscoveryData>();
 
-  public update(device: DeviceData): void {
+  public update(device: DiscoveryData): void {
     this._map.set(device.id, device);
   }
 
-  public get(id: number): DeviceData | undefined {
+  public get(id: number): DiscoveryData | undefined {
     return this._map.get(id);
   }
-  public getAll(): DeviceData[] {
+  public getAll(): DiscoveryData[] {
     this.removeExpired();
     return Array.from(this._map, (pair) => pair[1]).sort(this.sortByDate);
   }
@@ -27,7 +27,7 @@ export class DiscoveredList {
       this._map.delete(id);
     }
   }
-  private sortByDate(a: DeviceData, b: DeviceData): number {
+  private sortByDate(a: DiscoveryData, b: DiscoveryData): number {
     if (a.updatedAt > b.updatedAt) return -1;
     if (a.updatedAt < b.updatedAt) return 1;
     return 0;

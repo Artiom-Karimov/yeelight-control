@@ -1,4 +1,4 @@
-import { Feature } from '../feature';
+import { Feature } from '../enums/feature';
 import { BaseCommand, CommandData } from './command';
 
 export class GetPropCommand extends BaseCommand {

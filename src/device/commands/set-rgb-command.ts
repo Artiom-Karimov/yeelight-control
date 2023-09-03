@@ -1,8 +1,8 @@
 import { Feature } from '../enums/feature';
-import { Effect } from '../enums/effect';
 import { BaseCommand, CommandData } from './command';
+import { Effect } from '../enums/effect';
 
-export class SetTemperatureCommand extends BaseCommand {
+export class SetRgbCommand extends BaseCommand {
   private readonly value: number;
   private readonly effect: Effect;
   private readonly duration: number;
@@ -13,10 +13,10 @@ export class SetTemperatureCommand extends BaseCommand {
     effect = Effect.smooth,
     duration = 500,
   ) {
-    super(device, Feature.set_ct_abx);
+    super(device, Feature.set_rgb);
 
-    if (value < 1700 || value > 6500)
-      throw new Error(`Wrong temperature: ${value}`);
+    if (value < 0 || value > 0xffffff)
+      throw new Error(`Wrong color value: ${value.toString(16)}`);
 
     if (duration < 30) duration = 30;
 

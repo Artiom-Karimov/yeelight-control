@@ -1,4 +1,4 @@
-import { Feature } from '../feature';
+import { Feature } from '../enums/feature';
 import { CommandId } from './command-id';
 
 export interface CommandData {

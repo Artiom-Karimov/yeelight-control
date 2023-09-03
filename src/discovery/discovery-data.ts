@@ -1,6 +1,8 @@
-import { Feature } from './feature';
+import { DeviceState } from '../device/device-state';
+import { ColorMode } from '../device/enums/color-mode';
+import { Feature } from '../device/enums/feature';
 
-export class DeviceData {
+export class DiscoveryData implements DeviceState {
   /** Data received */
   updatedAt: Date;
   /** Data will be irrelevant at this time */
@@ -128,10 +130,4 @@ export class DeviceData {
       this.rawData[key.toLowerCase()] = value;
     }
   }
-}
-
-export enum ColorMode {
-  Color = 1,
-  Temperature = 2,
-  HSV = 3,
 }

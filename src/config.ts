@@ -1,5 +1,5 @@
-import { isIPv4 } from 'node:net';
 import { LocalNetwork } from './utils/local-network';
+import { ValueParser } from './utils/value-parser';
 
 export type ConfigParams = {
   /** Multicast port. Defaults to 1982 */
@@ -47,26 +47,17 @@ export class Config {
 
   private getPort({ discoveryPort: port }: Partial<ConfigParams>): number {
     if (port == null) return defaults.discoveryPort;
-    if (this.validatePort(port)) return port;
-    throw new Error(`Wrong discoveryPort: ${port}`);
-  }
-
-  private validatePort(value: unknown): value is number {
-    if (typeof value !== 'number') return false;
-    if (value % 1 !== 0) return false;
-    return value > 0 && value < 65536;
+    return ValueParser.port(port);
   }
 
   private getAddress({ discoveryIp: ip }: Partial<ConfigParams>): string {
     if (ip == null) return defaults.discoveryIp;
-    if (isIPv4(ip)) return ip;
-    throw new Error(`Wrong discoveryIP format: ${ip}`);
+    return ValueParser.ip(ip);
   }
 
   private getHost({ discoveryHost: ip }: Partial<ConfigParams>): string {
     if (ip == null) return this.getLocalhost();
-    if (isIPv4(ip)) return ip;
-    throw new Error(`Wrong discoveryHost: ${ip}`);
+    return ValueParser.ip(ip);
   }
 
   private getLocalhost(): string {

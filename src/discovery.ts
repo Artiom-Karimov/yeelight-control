@@ -17,6 +17,14 @@ export class Discovery extends EventEmitter {
     this.socket.bind(config.discoveryPort, config.discoveryHost);
   }
 
+  public sendRequest(): void {
+    this.socket.send(
+      discoverMessage,
+      this.config.discoveryPort,
+      this.config.discoveryIp,
+    );
+  }
+
   private error(err: Error): void {
     console.error(err);
   }
@@ -31,9 +39,13 @@ export class Discovery extends EventEmitter {
       this.config.discoveryIp,
       this.config.discoveryHost,
     );
+    this.emit('listening');
   }
 
   private receive(data: Buffer, rinfo: any): void {
-    console.log(data.toString(), JSON.stringify(rinfo));
+    console.log(data.toString());
   }
 }
+
+const discoverMessage =
+  'M-SEARCH * HTTP/1.1\r\nMAN: "ssdp:discover"\r\nST: wifi_bulb\r\n';

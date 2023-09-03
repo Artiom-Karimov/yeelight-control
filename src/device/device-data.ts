@@ -1,3 +1,5 @@
+import { Feature } from './feature';
+
 export class DeviceData {
   /** Data received */
   updatedAt: Date;
@@ -126,32 +128,6 @@ export class DeviceData {
       this.rawData[key.toLowerCase()] = value;
     }
   }
-}
-
-export enum Feature {
-  get_prop = 'get_prop',
-  set_default = 'set_default',
-  set_power = 'set_power',
-  toggle = 'toggle',
-  set_bright = 'set_bright',
-  set_scene = 'set_scene',
-  cron_add = 'cron_add',
-  cron_get = 'cron_get',
-  cron_del = 'cron_del',
-  start_cf = 'start_cf',
-  stop_cf = 'stop_cf',
-  set_ct_abx = 'set_ct_abx',
-  adjust_ct = 'adjust_ct',
-  set_name = 'set_name',
-  set_adjust = 'set_adjust',
-  adjust_bright = 'adjust_bright',
-  adjust_color = 'adjust_color',
-  set_rgb = 'set_rgb',
-  set_hsv = 'set_hsv',
-  set_music = 'set_music',
-  udp_sess_new = 'udp_sess_new',
-  udp_sess_keep_alive = 'udp_sess_keep_alive',
-  udp_chroma_sess_new = 'udp_chroma_sess_new',
 }
 
 export enum ColorMode {

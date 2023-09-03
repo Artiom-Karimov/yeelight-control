@@ -1,6 +1,7 @@
 import * as dgram from 'node:dgram';
 import { Config } from './config';
 import { EventEmitter } from 'node:events';
+import { DeviceData } from './device/device-data';
 
 export class Discovery extends EventEmitter {
   private socket: dgram.Socket;
@@ -43,7 +44,12 @@ export class Discovery extends EventEmitter {
   }
 
   private receive(data: Buffer, rinfo: any): void {
-    console.log(data.toString());
+    try {
+      const device = new DeviceData(data.toString());
+      this.emit('update', device);
+    } catch (error) {
+      return;
+    }
   }
 }
 

@@ -1,13 +1,22 @@
 import { Config } from './config';
-import { DeviceData } from './device/device-data';
-import { Discovery } from './discovery';
+import { DiscoveredList } from './discovery/discovered-list';
+import { Discovery } from './discovery/discovery';
+import { writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 
 export const start = () => {
   const config = new Config();
-  const discovery = new Discovery(config);
+  const list = new DiscoveredList();
+  const discovery = new Discovery(config, list);
   discovery.on('listening', () => discovery.sendRequest());
-  discovery.on('update', (device: DeviceData) =>
-    console.log(JSON.stringify(device, undefined, 2)),
+
+  discovery.on(
+    'update',
+    async (data) =>
+      await writeFile(
+        resolve(__dirname, '..', 'test-files', `${Date.now()}.json`),
+        JSON.stringify(data, undefined, 2),
+      ),
   );
 };
 

@@ -8,6 +8,8 @@ export type ConfigParams = {
   discoveryIp: string;
   /** Local machine IP. Defaults to first found interface */
   discoveryHost: string;
+  /** Reconnect timeout in ms */
+  socketReconnect: number;
 };
 
 export class Config {
@@ -26,6 +28,7 @@ export class Config {
       discoveryPort: this.getPort(params),
       discoveryIp: this.getAddress(params),
       discoveryHost: this.getHost(params),
+      socketReconnect: this.getReconnect(params),
     };
   }
 
@@ -37,6 +40,9 @@ export class Config {
   }
   get discoveryHost(): string {
     return this._state.discoveryHost;
+  }
+  get socketReconnect(): number {
+    return this._state.socketReconnect;
   }
 
   private getPort({ discoveryPort: port }: Partial<ConfigParams>): number {
@@ -67,10 +73,18 @@ export class Config {
     const localhost = LocalNetwork.getLocalIp();
     return localhost || defaults.discoveryHost;
   }
+
+  private getReconnect({ socketReconnect }: Partial<ConfigParams>): number {
+    if (socketReconnect == null) return defaults.socketReconnect;
+    if (typeof socketReconnect === 'number' && socketReconnect >= 0)
+      return socketReconnect;
+    throw new Error(`Invalid reconnect interval: ${socketReconnect}`);
+  }
 }
 
 const defaults: ConfigParams = {
   discoveryPort: 1982,
   discoveryIp: '239.255.255.250',
   discoveryHost: '0.0.0.0',
+  socketReconnect: 5000,
 };

@@ -1,19 +1,22 @@
 import * as dgram from 'node:dgram';
-import { Config } from './config';
+import { Config } from '../config';
 import { EventEmitter } from 'node:events';
-import { DeviceData } from './device/device-data';
+import { DeviceData } from '../device/device-data';
+import { DiscoveredList } from './discovered-list';
 
 export class Discovery extends EventEmitter {
   private socket: dgram.Socket;
 
-  constructor(private readonly config: Config) {
+  constructor(
+    private readonly config: Config,
+    private readonly list: DiscoveredList,
+  ) {
     super();
 
     this.socket = dgram.createSocket('udp4');
     this.socket.on('error', (err) => this.error(err));
     this.socket.on('listening', () => this.listening());
-    this.socket.on('close', () => this.emit('close'));
-    this.socket.on('message', (data, rinfo) => this.receive(data, rinfo));
+    this.socket.on('message', (data) => this.receive(data));
 
     this.socket.bind(config.discoveryPort, config.discoveryHost);
   }
@@ -27,15 +30,10 @@ export class Discovery extends EventEmitter {
   }
 
   private error(err: Error): void {
-    console.error(err);
+    this.emit('error', err);
   }
 
   private listening(): void {
-    console.log(
-      'listening',
-      this.config.discoveryIp,
-      this.config.discoveryPort,
-    );
     this.socket.addMembership(
       this.config.discoveryIp,
       this.config.discoveryHost,
@@ -43,10 +41,11 @@ export class Discovery extends EventEmitter {
     this.emit('listening');
   }
 
-  private receive(data: Buffer, rinfo: any): void {
+  private receive(data: Buffer): void {
     try {
       const device = new DeviceData(data.toString());
-      this.emit('update', device);
+      this.list.update(device);
+      this.emit('update', this.list.getAll());
     } catch (error) {
       return;
     }

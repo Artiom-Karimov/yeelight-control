@@ -7,7 +7,8 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "start": "node ./dist/main.js",
+    "start": "ts-node ./src/main.ts",
+    "start:prod": "node ./dist/main.js",
     "start:dev": "nodemon ./src/main.ts",
     "test": "jest",
     "test:watch": "jest --watch"

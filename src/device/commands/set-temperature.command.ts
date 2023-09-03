@@ -1,15 +1,19 @@
 import { Feature } from '../feature';
-import { Command, CommandData } from './command';
-import { CommandId } from './command-id';
+import { BaseCommand, CommandData } from './command';
 
-export class SetTemperatureCommand implements Command {
-  private readonly feature = Feature.set_ct_abx;
-  private readonly id = CommandId.next();
+export class SetTemperatureCommand extends BaseCommand {
   private readonly value: number;
   private readonly effect: Effect;
   private readonly duration: number;
 
-  constructor(value: number, effect = Effect.smooth, duration = 500) {
+  constructor(
+    device: number,
+    value: number,
+    effect = Effect.smooth,
+    duration = 500,
+  ) {
+    super(device, Feature.set_ct_abx);
+
     if (value < 1700 || value > 6500)
       throw new Error(`Wrong temperature: ${value}`);
 
@@ -22,8 +26,8 @@ export class SetTemperatureCommand implements Command {
 
   get data(): CommandData {
     return {
-      id: this.id,
-      method: this.feature,
+      id: this._id,
+      method: this._feature,
       params: [this.value, this.effect, this.duration],
     };
   }

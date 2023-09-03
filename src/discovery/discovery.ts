@@ -18,15 +18,16 @@ export class Discovery extends EventEmitter {
     this.socket.on('listening', () => this.listening());
     this.socket.on('message', (data) => this.receive(data));
 
-    this.socket.bind(config.discoveryPort, config.discoveryHost);
+    const port = config.get('discoveryPort') as number;
+    const address = config.get('discoveryHost') as string;
+
+    this.socket.bind(port, address);
   }
 
   public sendRequest(): void {
-    this.socket.send(
-      discoverMessage,
-      this.config.discoveryPort,
-      this.config.discoveryIp,
-    );
+    const port = this.config.get('discoveryPort') as number;
+    const address = this.config.get('discoveryIp') as string;
+    this.socket.send(discoverMessage, port, address);
   }
 
   private error(err: Error): void {
@@ -34,10 +35,9 @@ export class Discovery extends EventEmitter {
   }
 
   private listening(): void {
-    this.socket.addMembership(
-      this.config.discoveryIp,
-      this.config.discoveryHost,
-    );
+    const multicastAddress = this.config.get('discoveryIp') as string;
+    const multicastInterface = this.config.get('discoveryHost') as string;
+    this.socket.addMembership(multicastAddress, multicastInterface);
     this.emit('listening');
   }
 

@@ -10,6 +10,8 @@ export type ConfigParams = {
   discoveryHost: string;
   /** Reconnect timeout in ms */
   socketReconnect: number;
+  /** Command will be removed from queue after this timeout (milliseconds) */
+  commandExpire: number;
 };
 
 export class Config {
@@ -29,20 +31,12 @@ export class Config {
       discoveryIp: this.getAddress(params),
       discoveryHost: this.getHost(params),
       socketReconnect: this.getReconnect(params),
+      commandExpire: this.getExpire(params),
     };
   }
 
-  get discoveryPort(): number {
-    return this._state.discoveryPort;
-  }
-  get discoveryIp(): string {
-    return this._state.discoveryIp;
-  }
-  get discoveryHost(): string {
-    return this._state.discoveryHost;
-  }
-  get socketReconnect(): number {
-    return this._state.socketReconnect;
+  public get(key: keyof ConfigParams): string | number {
+    return this._state[key];
   }
 
   private getPort({ discoveryPort: port }: Partial<ConfigParams>): number {
@@ -71,6 +65,11 @@ export class Config {
       return socketReconnect;
     throw new Error(`Invalid reconnect interval: ${socketReconnect}`);
   }
+
+  private getExpire({ commandExpire }: Partial<ConfigParams>): number {
+    if (commandExpire == null) return defaults.commandExpire;
+    return ValueParser.timeout(commandExpire);
+  }
 }
 
 const defaults: ConfigParams = {
@@ -78,4 +77,5 @@ const defaults: ConfigParams = {
   discoveryIp: '239.255.255.250',
   discoveryHost: '0.0.0.0',
   socketReconnect: 5000,
+  commandExpire: 5000,
 };

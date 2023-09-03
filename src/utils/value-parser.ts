@@ -1,4 +1,5 @@
 import { isIPv4 } from 'node:net';
+import { Constants } from '../constants';
 
 export class ValueParser {
   private constructor() {
@@ -11,16 +12,29 @@ export class ValueParser {
   }
 
   public static port(value: unknown): number {
-    let port: number;
-
-    if (typeof value === 'number') port = value;
-    else if (typeof value === 'string') port = +value;
-    else throw new Error('Wrong port datatype');
-
-    if (isNaN(port)) throw new Error(`Wrong port format: ${value}`);
+    const port = ValueParser.parseInt(value, 'port');
     if (port < 1 || port > 65535) throw new Error('Port must be 1-65535');
-    if (port % 1 !== 0) throw new Error('Port must be an integer');
 
     return port;
+  }
+
+  public static timeout(value: unknown): number {
+    let timeout = ValueParser.parseInt(value, 'timeout');
+    if (timeout < Constants.minTimeout) timeout = Constants.minTimeout;
+    if (timeout > Constants.maxTimeout) timeout = Constants.maxTimeout;
+    return timeout;
+  }
+
+  private static parseInt(value: unknown, name: string): number {
+    let result: number;
+
+    if (typeof value === 'number') result = value;
+    else if (typeof value === 'string') result = +value;
+    else throw new Error('Wrong ${name} datatype');
+
+    if (isNaN(result)) throw new Error(`Wrong ${name} format: ${value}`);
+    if (result % 1 !== 0) throw new Error(`${name} must be an integer`);
+
+    return result;
   }
 }

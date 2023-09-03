@@ -12,10 +12,12 @@ export interface Command {
   get device(): number;
   get feature(): Feature;
   get data(): CommandData;
+  // TODO: response (check status, update device)
 }
 export abstract class BaseCommand implements Command {
   protected readonly _id = CommandId.next();
   protected readonly _createdAt = new Date();
+  // TODO: replace with Device for status update
   protected readonly _device: number;
   protected readonly _feature: Feature;
 

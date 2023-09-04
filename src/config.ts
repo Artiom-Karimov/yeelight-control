@@ -2,6 +2,8 @@ import { LocalNetwork } from './utils/local-network';
 import { ValueParser } from './utils/value-parser';
 
 export type ConfigParams = {
+  /** Device control interface TCP port. Defaults to 55443 */
+  controlPort: number;
   /** Multicast port. Defaults to 1982 */
   discoveryPort: number;
   /** Multicast address. Defaults to 239.255.255.250 */
@@ -27,7 +29,8 @@ export class Config {
     }
 
     this._state = {
-      discoveryPort: this.getPort(params),
+      controlPort: this.getControlPort(params),
+      discoveryPort: this.getDiscoveryPort(params),
       discoveryIp: this.getAddress(params),
       discoveryHost: this.getHost(params),
       socketReconnect: this.getReconnect(params),
@@ -35,11 +38,18 @@ export class Config {
     };
   }
 
-  public get(key: keyof ConfigParams): string | number {
-    return this._state[key];
+  public get<T>(key: keyof ConfigParams): T {
+    return this._state[key] as T;
   }
 
-  private getPort({ discoveryPort: port }: Partial<ConfigParams>): number {
+  private getControlPort({ controlPort: port }: Partial<ConfigParams>): number {
+    if (port == null) return defaults.controlPort;
+    return ValueParser.port(port);
+  }
+
+  private getDiscoveryPort({
+    discoveryPort: port,
+  }: Partial<ConfigParams>): number {
     if (port == null) return defaults.discoveryPort;
     return ValueParser.port(port);
   }
@@ -73,6 +83,7 @@ export class Config {
 }
 
 const defaults: ConfigParams = {
+  controlPort: 55443,
   discoveryPort: 1982,
   discoveryIp: '239.255.255.250',
   discoveryHost: '0.0.0.0',

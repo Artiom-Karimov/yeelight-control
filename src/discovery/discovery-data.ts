@@ -55,6 +55,23 @@ export class DiscoveryData implements DeviceState {
     this.name = this.findRaw('name');
   }
 
+  public getState(): DeviceState {
+    return {
+      id: this.id,
+      model: this.model,
+      fw_ver: this.fw_ver,
+      support: [...this.support],
+      power: this.power,
+      bright: this.bright,
+      color_mode: this.color_mode,
+      ct: this.ct,
+      rgb: this.rgb,
+      hue: this.hue,
+      sat: this.sat,
+      name: this.name,
+    };
+  }
+
   private parseExpiration(): void {
     const value = this.findRaw('Cache-Control');
     if (!value) throw new Error('No cache-control header in message');

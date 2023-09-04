@@ -1,5 +1,7 @@
+import { Config } from '../config';
 import { DiscoveryData } from '../discovery/discovery-data';
 import { ValueParser } from '../utils/value-parser';
+import { CommandCache } from './command-cache';
 import { DeviceState } from './device-state';
 
 export class Device {
@@ -8,14 +10,31 @@ export class Device {
   private readonly _ip: string;
   private readonly _port: number;
 
-  constructor(ip: string, port: number) {
+  private readonly commands: CommandCache;
+
+  constructor(config: Config, ip: string, port: number | undefined) {
     this._ip = ValueParser.ip(ip);
-    this._port = ValueParser.port(port);
+    this._port = port
+      ? ValueParser.port(port)
+      : config.get<number>('controlPort');
+
+    this.commands = new CommandCache(config);
   }
-  public static fromDiscovery(data: DiscoveryData): Device {
-    const device = new Device(data.ip, data.port);
+  public static fromDiscovery(config: Config, data: DiscoveryData): Device {
+    const device = new Device(config, data.ip, data.port);
     device._id = data.id;
+    device._state = data.getState();
 
     return device;
+  }
+
+  get id(): number | undefined {
+    return this._id;
+  }
+  get state(): DeviceState {
+    return { ...this._state };
+  }
+  get ip(): string {
+    return this._ip;
   }
 }

@@ -37,4 +37,7 @@ export class Device {
   get ip(): string {
     return this._ip;
   }
+  get port(): number {
+    return this._port;
+  }
 }

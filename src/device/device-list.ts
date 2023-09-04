@@ -8,7 +8,7 @@ export class DeviceList {
   constructor(private readonly config: Config) {}
 
   public create(ip: string, port?: number): Device {
-    let device = this.findByIp(ip);
+    let device = this.findByIp(ip, port);
     if (device) return device;
 
     device = new Device(this.config, ip, port);
@@ -26,7 +26,8 @@ export class DeviceList {
     return this.list.find((d) => d.id === id);
   }
 
-  private findByIp(ip: string): Device | undefined {
+  private findByIp(ip: string, port?: number): Device | undefined {
+    if (port) return this.list.find((d) => d.ip === ip && d.port === port);
     return this.list.find((d) => d.ip === ip);
   }
 }

@@ -1,4 +1,5 @@
 export class CommandId {
+  private static readonly maxId = 65535;
   private static current = 0;
 
   private constructor() {
@@ -6,10 +7,12 @@ export class CommandId {
   }
 
   public static next(): number {
-    let next = CommandId.current;
-    next++;
-    if (next > 65535) next = 1;
-    CommandId.current = next;
-    return next;
+    CommandId.increment();
+    return CommandId.current;
+  }
+
+  private static increment(): void {
+    CommandId.current++;
+    if (CommandId.current > CommandId.maxId) CommandId.current = 1;
   }
 }

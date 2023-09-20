@@ -1,5 +1,5 @@
 import { LocalNetwork } from './utils/local-network';
-import { ValueParser } from './utils/value-parser';
+import { SetupParser } from './utils/setup-value-parser';
 
 export type ConfigParams = {
   /** Device control interface TCP port. Defaults to 55443 */
@@ -44,24 +44,24 @@ export class Config {
 
   private getControlPort({ controlPort: port }: Partial<ConfigParams>): number {
     if (port == null) return defaults.controlPort;
-    return ValueParser.port(port);
+    return SetupParser.port(port);
   }
 
   private getDiscoveryPort({
     discoveryPort: port,
   }: Partial<ConfigParams>): number {
     if (port == null) return defaults.discoveryPort;
-    return ValueParser.port(port);
+    return SetupParser.port(port);
   }
 
   private getAddress({ discoveryIp: ip }: Partial<ConfigParams>): string {
     if (ip == null) return defaults.discoveryIp;
-    return ValueParser.ip(ip);
+    return SetupParser.ip(ip);
   }
 
   private getHost({ discoveryHost: ip }: Partial<ConfigParams>): string {
     if (ip == null) return this.getLocalhost();
-    return ValueParser.ip(ip);
+    return SetupParser.ip(ip);
   }
 
   private getLocalhost(): string {
@@ -78,7 +78,7 @@ export class Config {
 
   private getExpire({ commandExpire }: Partial<ConfigParams>): number {
     if (commandExpire == null) return defaults.commandExpire;
-    return ValueParser.timeout(commandExpire);
+    return SetupParser.timeout(commandExpire);
   }
 }
 

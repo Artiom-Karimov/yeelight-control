@@ -1,10 +1,10 @@
-import EventEmitter from 'events';
 import { Config, ConfigParams } from './config';
 import { DiscoveredList } from './discovery/discovered-list';
 import { Discovery } from './discovery/discovery';
 import { DiscoveryData } from './discovery/discovery-data';
 import { DeviceList } from './device/device-list';
 import { Device } from './device/device';
+import { EventEmitter } from 'node:events';
 
 export class Yeelight extends EventEmitter {
   private readonly config: Config;

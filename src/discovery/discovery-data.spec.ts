@@ -19,11 +19,13 @@ describe('Data parsing test', () => {
     expect(data.ip).toBe('192.168.88.22');
     expect(data.port).toBe(55443);
 
-    expect(data.id).toBe(245338372);
-    expect(data.model).toBe('colora');
-    expect(data.fw_ver).toBe('9');
+    const state = data.getState();
 
-    expect(data.support).toEqual([
+    expect(state.id).toBe(245338372);
+    expect(state.model).toBe('colora');
+    expect(state.fw_ver).toBe('9');
+
+    expect(state.support).toEqual([
       Feature.get_prop,
       Feature.set_default,
       Feature.set_power,
@@ -49,14 +51,14 @@ describe('Data parsing test', () => {
       Feature.udp_chroma_sess_new,
     ]);
 
-    expect(data.power).toBe('off');
-    expect(data.bright).toBe(100);
-    expect(data.color_mode).toBe(ColorMode.Color);
-    expect(data.ct).toBe(5725);
-    expect(data.rgb).toBe(16714471);
-    expect(data.hue).toBe(306);
-    expect(data.sat).toBe(96);
-    expect(data.name).toBeUndefined();
+    expect(state.power).toBe('off');
+    expect(state.bright).toBe(100);
+    expect(state.color_mode).toBe(ColorMode.Color);
+    expect(state.ct).toBe(5725);
+    expect(state.rgb).toBe(16714471);
+    expect(state.hue).toBe(306);
+    expect(state.sat).toBe(96);
+    expect(state.name).toBeUndefined();
   });
   test('Should map warm white bulb values', () => {
     const data = new DiscoveryData(warmBulbNotify);
@@ -69,11 +71,13 @@ describe('Data parsing test', () => {
     expect(data.ip).toBe('192.168.88.23');
     expect(data.port).toBe(55443);
 
-    expect(data.id).toBe(248419679);
-    expect(data.model).toBe('monoa');
-    expect(data.fw_ver).toBe('9');
+    const state = data.getState();
 
-    expect(data.support).toEqual([
+    expect(state.id).toBe(248419679);
+    expect(state.model).toBe('monoa');
+    expect(state.fw_ver).toBe('9');
+
+    expect(state.support).toEqual([
       Feature.get_prop,
       Feature.set_default,
       Feature.set_power,
@@ -90,14 +94,14 @@ describe('Data parsing test', () => {
       Feature.adjust_bright,
     ]);
 
-    expect(data.power).toBe('on');
-    expect(data.bright).toBe(46);
-    expect(data.color_mode).toBe(ColorMode.Temperature);
-    expect(data.ct).toBe(2700);
-    expect(data.rgb).toBe(0);
-    expect(data.hue).toBe(0);
-    expect(data.sat).toBe(0);
-    expect(data.name).toBe('sampleBulb');
+    expect(state.power).toBe('on');
+    expect(state.bright).toBe(46);
+    expect(state.color_mode).toBe(ColorMode.Temperature);
+    expect(state.ct).toBe(2700);
+    expect(state.rgb).toBe(0);
+    expect(state.hue).toBe(0);
+    expect(state.sat).toBe(0);
+    expect(state.name).toBe('sampleBulb');
   });
   test('Should map strip6 values', () => {
     const data = new DiscoveryData(stripResponse);
@@ -110,11 +114,13 @@ describe('Data parsing test', () => {
     expect(data.ip).toBe('192.168.88.21');
     expect(data.port).toBe(55443);
 
-    expect(data.id).toBe(358548669);
-    expect(data.model).toBe('strip6');
-    expect(data.fw_ver).toBe('20');
+    const state = data.getState();
 
-    expect(data.support).toEqual([
+    expect(state.id).toBe(358548669);
+    expect(state.model).toBe('strip6');
+    expect(state.fw_ver).toBe('20');
+
+    expect(state.support).toEqual([
       Feature.get_prop,
       Feature.set_default,
       Feature.set_power,
@@ -140,14 +146,14 @@ describe('Data parsing test', () => {
       Feature.udp_chroma_sess_new,
     ]);
 
-    expect(data.power).toBe('on');
-    expect(data.bright).toBe(15);
-    expect(data.color_mode).toBe(ColorMode.Color);
-    expect(data.ct).toBe(5330);
-    expect(data.rgb).toBe(16745728);
-    expect(data.hue).toBe(31);
-    expect(data.sat).toBe(100);
-    expect(data.name).toBeUndefined();
+    expect(state.power).toBe('on');
+    expect(state.bright).toBe(15);
+    expect(state.color_mode).toBe(ColorMode.Color);
+    expect(state.ct).toBe(5330);
+    expect(state.rgb).toBe(16745728);
+    expect(state.hue).toBe(31);
+    expect(state.sat).toBe(100);
+    expect(state.name).toBeUndefined();
   });
   test('Should throw error on request data', () => {
     const shouldFail = () => {

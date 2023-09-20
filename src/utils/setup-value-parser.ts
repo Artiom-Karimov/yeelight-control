@@ -1,7 +1,7 @@
 import { isIPv4 } from 'node:net';
 import { Constants } from '../constants';
 
-export class ValueParser {
+export class SetupParser {
   private constructor() {
     return;
   }
@@ -12,14 +12,14 @@ export class ValueParser {
   }
 
   public static port(value: unknown): number {
-    const port = ValueParser.parseInt(value, 'port');
+    const port = SetupParser.parseInt(value, 'port');
     if (port < 1 || port > 65535) throw new Error('Port must be 1-65535');
 
     return port;
   }
 
   public static timeout(value: unknown): number {
-    let timeout = ValueParser.parseInt(value, 'timeout');
+    let timeout = SetupParser.parseInt(value, 'timeout');
     if (timeout < Constants.minTimeout) timeout = Constants.minTimeout;
     if (timeout > Constants.maxTimeout) timeout = Constants.maxTimeout;
     return timeout;

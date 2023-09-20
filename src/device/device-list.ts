@@ -8,10 +8,10 @@ export class DeviceList {
   constructor(private readonly config: Config) {}
 
   public create(ip: string, port?: number): Device {
-    let device = this.findByIp(ip, port);
+    const device = this.findByIp(ip, port);
     if (device) return device;
 
-    device = new Device(this.config, ip, port);
+    return new Device(this.config, ip, port);
   }
   public createFromDiscovery(data: DiscoveryData): Device {
     let device = this.findById(data.id);

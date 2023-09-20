@@ -1,8 +1,8 @@
 import { Config } from '../config';
 import { DiscoveryData } from '../discovery/discovery-data';
-import { ValueParser } from '../utils/value-parser';
+import { SetupParser } from '../utils/setup-value-parser';
 import { CommandCache } from './command-cache';
-import { DeviceState } from './device-state';
+import { DeviceState } from './dto/device-state';
 
 export class Device {
   private _id?: number;
@@ -13,17 +13,18 @@ export class Device {
   private readonly commands: CommandCache;
 
   constructor(config: Config, ip: string, port: number | undefined) {
-    this._ip = ValueParser.ip(ip);
+    this._ip = SetupParser.ip(ip);
     this._port = port
-      ? ValueParser.port(port)
+      ? SetupParser.port(port)
       : config.get<number>('controlPort');
 
     this.commands = new CommandCache(config);
   }
   public static fromDiscovery(config: Config, data: DiscoveryData): Device {
     const device = new Device(config, data.ip, data.port);
-    device._id = data.id;
-    device._state = data.getState();
+    const state = data.getState();
+    device._id = state.id;
+    device._state = state;
 
     return device;
   }
@@ -39,5 +40,12 @@ export class Device {
   }
   get port(): number {
     return this._port;
+  }
+
+  update(data: DeviceState): void {
+    this._state = {
+      ...this._state,
+      ...data,
+    };
   }
 }

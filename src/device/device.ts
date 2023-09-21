@@ -9,12 +9,16 @@ import { Notification } from './commands/notification';
 import { TelnetResponse } from './commands/response';
 import { ToggleCommand } from './commands/implementations/toggle.command';
 import { Command } from './commands/command';
+import { GetPropCommand } from './commands/implementations/get-prop.command';
+import { Param } from './enums/param';
+import { Constants } from '../constants';
 
 export enum DeviceEvent {
   warning = 'warning',
   update = 'update',
   connect = 'connect',
   disconnect = 'disconnect',
+  debug = 'debug',
 }
 
 export interface Device {
@@ -27,6 +31,7 @@ export interface Device {
   on(event: DeviceEvent.update, cb: (state: DeviceState) => void): Device;
   on(event: DeviceEvent.connect, cb: () => void): Device;
   on(event: DeviceEvent.disconnect, cb: () => void): Device;
+  on(event: DeviceEvent.debug, cb: (message: string) => void): Device;
   removeListener(event: DeviceEvent, cb: (...args: any[]) => void): Device;
 
   toggle(): void;
@@ -77,10 +82,10 @@ export class YeelightDevice implements Device {
   }
 
   update(data: DeviceState): void {
-    this._state = {
-      ...this._state,
-      ...data,
-    };
+    for (const key in data) {
+      const param = key as Param;
+      if (data[param] != null) this._state[param] = data[param] as any;
+    }
 
     this.emitter.emit(DeviceEvent.update, this.state);
   }
@@ -94,6 +99,10 @@ export class YeelightDevice implements Device {
     return this;
   }
 
+  refresh(): void {
+    this.execute(new GetPropCommand(this, [...Object.values(Param)]));
+  }
+
   toggle(): void {
     this.execute(new ToggleCommand(this));
   }
@@ -101,6 +110,7 @@ export class YeelightDevice implements Device {
   private execute(command: Command): void {
     this.commands.add(command);
     this.client.send(command.data);
+    this.emitter.emit(DeviceEvent.debug, `Sent: ${command.data}`);
   }
 
   private setupClient(): void {
@@ -113,10 +123,12 @@ export class YeelightDevice implements Device {
   }
 
   private onConnect = () => {
+    setTimeout(() => this.refresh(), Constants.minTimeout);
     this.emitter.emit(DeviceEvent.connect);
   };
 
   private onData = (data: string) => {
+    this.emitter.emit(DeviceEvent.debug, `Received: ${data}`);
     if (this.tryParseNotification(data) || this.tryParseResponse(data)) return;
     this.emitter.emit(DeviceEvent.warning, `Unrecognized response: ${data}`);
   };
@@ -134,7 +146,11 @@ export class YeelightDevice implements Device {
       const notification = new Notification(data);
       this.update(notification.state);
       return true;
-    } catch (err) {
+    } catch (error) {
+      this.emitter.emit(
+        DeviceEvent.debug,
+        `Data is not notification: ${error}`,
+      );
       return false;
     }
   }
@@ -145,6 +161,7 @@ export class YeelightDevice implements Device {
       this.commands.response(response);
       return true;
     } catch (error) {
+      this.emitter.emit(DeviceEvent.debug, `Data is not response: ${error}`);
       return false;
     }
   }

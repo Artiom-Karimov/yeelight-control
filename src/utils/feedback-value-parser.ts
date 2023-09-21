@@ -4,6 +4,7 @@ import { ColorMode } from '../device/enums/color-mode';
 import { Feature } from '../device/enums/feature';
 import { FlowParams } from '../device/dto/flow-expression';
 import { Power } from '../device/enums/power';
+import { AfterFlowAction } from '../device/enums/after-flow-actiion';
 
 export class FeedbackParser {
   parseState(data: RawDeviceState): DeviceState {
@@ -67,17 +68,13 @@ export class FeedbackParser {
   }
 
   private flowParams(value: unknown): FlowParams | undefined {
-    if (
-      !Array.isArray(value) ||
-      value.length !== 3 ||
-      typeof value[0] !== 'number' ||
-      typeof value[1] !== 'number' ||
-      typeof value[2] !== 'string'
-    ) {
+    if (typeof value !== 'string') return undefined;
+    const data = value.split(',');
+    if (!Array.isArray(data) || data.length < 6) {
       return undefined;
     }
 
-    return value as FlowParams;
+    return [+data[0], +data[1] as AfterFlowAction, data.slice(2).join(',')];
   }
 
   private id(value: unknown): number {

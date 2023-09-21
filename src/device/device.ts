@@ -3,10 +3,12 @@ import { Config } from '../config';
 import { DiscoveryData } from '../discovery/discovery-data';
 import { SetupParser } from '../utils/setup-value-parser';
 import { TelnetClient, TelnetEvent } from '../utils/telnet-client';
-import { CommandCache } from './command-cache';
+import { CommandCache } from './commands/command-cache';
 import { DeviceState } from './dto/device-state';
 import { Notification } from './commands/notification';
 import { TelnetResponse } from './commands/response';
+import { ToggleCommand } from './commands/implementations/toggle.command';
+import { Command } from './commands/command';
 
 export enum DeviceEvent {
   warning = 'warning',
@@ -25,7 +27,9 @@ export interface Device {
   on(event: DeviceEvent.update, cb: (state: DeviceState) => void): Device;
   on(event: DeviceEvent.connect, cb: () => void): Device;
   on(event: DeviceEvent.disconnect, cb: () => void): Device;
-  removeListener(event: DeviceEvent, cb: (...args: any[]) => void): void;
+  removeListener(event: DeviceEvent, cb: (...args: any[]) => void): Device;
+
+  toggle(): void;
 
   update(data: DeviceState): void;
 }
@@ -85,8 +89,18 @@ export class YeelightDevice implements Device {
     this.emitter.on(event, cb);
     return this;
   }
-  removeListener(event: DeviceEvent, cb: (...args: any[]) => void): void {
+  removeListener(event: DeviceEvent, cb: (...args: any[]) => void): Device {
     this.emitter.removeListener(event, cb);
+    return this;
+  }
+
+  toggle(): void {
+    this.execute(new ToggleCommand(this));
+  }
+
+  private execute(command: Command): void {
+    this.commands.add(command);
+    this.client.send(command.data);
   }
 
   private setupClient(): void {

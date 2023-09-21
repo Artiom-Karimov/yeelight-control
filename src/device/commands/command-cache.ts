@@ -1,6 +1,6 @@
-import { Config } from '../config';
-import { Command } from './commands/command';
-import { Response } from './commands/response';
+import { Config } from '../../config';
+import { Command } from './command';
+import { Response } from './response';
 
 export class CommandCache {
   private readonly list = new Array<Command>();

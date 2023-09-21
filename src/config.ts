@@ -20,7 +20,7 @@ export interface Config {
   get<T>(key: keyof ConfigParams): T;
 }
 
-export class YeelightConfig {
+export class YeelightConfig implements Config {
   private _state: ConfigParams;
 
   constructor(params?: Partial<ConfigParams>) {

@@ -8,7 +8,29 @@ import { DeviceState } from './dto/device-state';
 import { Notification } from './commands/notification';
 import { TelnetResponse } from './commands/response';
 
-export class Device {
+export enum DeviceEvent {
+  warning = 'warning',
+  update = 'update',
+  connect = 'connect',
+  disconnect = 'disconnect',
+}
+
+export interface Device {
+  get id(): number | undefined;
+  get state(): DeviceState;
+  get ip(): string;
+  get port(): number;
+
+  on(event: DeviceEvent.warning, cb: (message: string) => void): Device;
+  on(event: DeviceEvent.update, cb: (state: DeviceState) => void): Device;
+  on(event: DeviceEvent.connect, cb: () => void): Device;
+  on(event: DeviceEvent.disconnect, cb: () => void): Device;
+  removeListener(event: DeviceEvent, cb: (...args: any[]) => void): void;
+
+  update(data: DeviceState): void;
+}
+
+export class YeelightDevice implements Device {
   private _id?: number;
   private _state: DeviceState = {};
   private readonly _ip: string;
@@ -29,7 +51,7 @@ export class Device {
     this.setupClient();
   }
   public static fromDiscovery(config: Config, data: DiscoveryData): Device {
-    const device = new Device(config, data.ip, data.port);
+    const device = new YeelightDevice(config, data.ip, data.port);
     const state = data.getState();
     device._id = state.id;
     device._state = state;
@@ -55,6 +77,16 @@ export class Device {
       ...this._state,
       ...data,
     };
+
+    this.emitter.emit(DeviceEvent.update, this.state);
+  }
+
+  on(event: DeviceEvent, cb: (...args: any[]) => void): Device {
+    this.emitter.on(event, cb);
+    return this;
+  }
+  removeListener(event: DeviceEvent, cb: (...args: any[]) => void): void {
+    this.emitter.removeListener(event, cb);
   }
 
   private setupClient(): void {
@@ -67,21 +99,20 @@ export class Device {
   }
 
   private onConnect = () => {
-    this.emitter.emit('connect');
+    this.emitter.emit(DeviceEvent.connect);
   };
 
   private onData = (data: string) => {
-    if (this.tryParseNotification(data)) return;
-    if (this.tryParseResponse(data)) return;
-    this.emitter.emit('warning', `Unrecognized response: ${data}`);
+    if (this.tryParseNotification(data) || this.tryParseResponse(data)) return;
+    this.emitter.emit(DeviceEvent.warning, `Unrecognized response: ${data}`);
   };
 
   private onError = (err: NodeJS.ErrnoException) => {
-    this.emitter.emit('warning', `Socket error: ${err.code}`);
+    this.emitter.emit(DeviceEvent.warning, `Socket error: ${err.code}`);
   };
 
   private onClose = () => {
-    this.emitter.emit('warning', `Socket disconnected`);
+    this.emitter.emit(DeviceEvent.disconnect);
   };
 
   private tryParseNotification(data: string): boolean {

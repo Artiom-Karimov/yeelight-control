@@ -5,7 +5,7 @@ export interface Response {
   get success(): boolean;
 }
 
-export class TelnetResponse {
+export class TelnetResponse implements Response {
   public readonly id: number;
   public readonly result?: Array<string>;
   public readonly error?: ResponseError;

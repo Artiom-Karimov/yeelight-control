@@ -1,6 +1,6 @@
 import { Config } from '../config';
 import { DiscoveryData } from '../discovery/discovery-data';
-import { Device } from './device';
+import { Device, YeelightDevice } from './device';
 
 export class DeviceList {
   private readonly list = new Array<Device>();
@@ -11,13 +11,13 @@ export class DeviceList {
     const device = this.findByIp(ip, port);
     if (device) return device;
 
-    return new Device(this.config, ip, port);
+    return new YeelightDevice(this.config, ip, port);
   }
   public createFromDiscovery(data: DiscoveryData): Device {
     let device = this.findById(data.id);
     if (device) return device;
 
-    device = Device.fromDiscovery(this.config, data);
+    device = YeelightDevice.fromDiscovery(this.config, data);
     this.list.push(device);
     return device;
   }

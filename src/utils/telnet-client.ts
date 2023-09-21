@@ -48,8 +48,12 @@ export class TelnetClient {
     this.emitter.on(event, cb);
     return this;
   }
-  removeListener(event: TelnetEvent, callback: (...args: any[]) => void): void {
+  removeListener(
+    event: TelnetEvent,
+    callback: (...args: any[]) => void,
+  ): TelnetClient {
     this.emitter.removeListener(event, callback);
+    return this;
   }
 
   private onError = (err: NodeJS.ErrnoException) => {

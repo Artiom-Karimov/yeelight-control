@@ -1,4 +1,11 @@
-export class Response {
+export interface Response {
+  readonly id: number;
+  readonly result?: Array<string>;
+  readonly error?: ResponseError;
+  get success(): boolean;
+}
+
+export class TelnetResponse {
   public readonly id: number;
   public readonly result?: Array<string>;
   public readonly error?: ResponseError;

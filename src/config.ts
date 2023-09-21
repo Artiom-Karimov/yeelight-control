@@ -16,7 +16,11 @@ export type ConfigParams = {
   commandExpire: number;
 };
 
-export class Config {
+export interface Config {
+  get<T>(key: keyof ConfigParams): T;
+}
+
+export class YeelightConfig {
   private _state: ConfigParams;
 
   constructor(params?: Partial<ConfigParams>) {

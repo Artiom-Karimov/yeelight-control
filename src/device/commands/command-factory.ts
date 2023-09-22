@@ -3,6 +3,7 @@ import { CommandInput } from '../dto/command-input';
 import { Feature } from '../enums/feature';
 import { Command } from './command';
 import { BrightCommand } from './implementations/bright.command';
+import { DefaultCommand } from './implementations/default.command';
 import { HsvCommand } from './implementations/hsv.command';
 import { PowerCommand } from './implementations/power.command';
 import { RgbCommand } from './implementations/rgb.command';
@@ -36,6 +37,9 @@ export class CommandFactory {
       feature === Feature.dev_toggle
     )
       return new ToggleCommand(this.device, input);
+
+    if (feature === Feature.set_default || feature === Feature.bg_set_default)
+      return new DefaultCommand(this.device, input);
 
     throw new Error(`Feature ${feature} not implemented`);
   }

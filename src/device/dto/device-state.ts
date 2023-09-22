@@ -1,6 +1,6 @@
-import { Power } from '../enums/power';
 import { ColorMode } from '../enums/color-mode';
 import { Param } from '../enums/param';
+import { Power } from '../enums/string-values';
 
 export type RawDeviceState = { [key in Param]?: string };
 

@@ -3,8 +3,8 @@ import { DeviceState, RawDeviceState } from '../device/dto/device-state';
 import { ColorMode } from '../device/enums/color-mode';
 import { Feature } from '../device/enums/feature';
 import { FlowParams } from '../device/dto/flow-expression';
-import { Power } from '../device/enums/power';
 import { AfterFlowAction } from '../device/enums/after-flow-actiion';
+import { Power } from '../device/enums/string-values';
 
 export class FeedbackParser {
   parseState(data: RawDeviceState): DeviceState {
@@ -59,7 +59,7 @@ export class FeedbackParser {
 
   private power(value: unknown): Power | undefined {
     if (!this.checkString(value)) return undefined;
-    return value === Power.on ? Power.on : Power.off;
+    return value === 'on' ? 'on' : 'off';
   }
 
   private colorMode(value: unknown): ColorMode | undefined {

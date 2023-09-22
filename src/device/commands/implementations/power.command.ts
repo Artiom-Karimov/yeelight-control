@@ -1,22 +1,30 @@
-import { Feature } from '../../enums/feature';
-import { Effect } from '../../enums/effect';
 import { BaseCommand, CommandData } from '../command';
 import { Device } from '../../device';
-import { Power } from '../../enums/power';
 import { Response } from '../response';
-import { DeviceState } from '../../dto/device-state';
 import { ColorMode } from '../../enums/color-mode';
+import { PowerInput } from '../../dto/command-input';
+import { Feature } from '../../enums/feature';
+import { Effect, Power } from '../../enums/string-values';
 
 export class PowerCommand extends BaseCommand {
+  private readonly value: Power;
+  private readonly effect: Effect;
+  private readonly duration: number;
+  private readonly mode: PowerMode;
+
   constructor(
     device: Device,
-    private readonly value: Power,
-    private readonly effect = Effect.smooth,
-    private readonly duration = 500,
-    private readonly mode = PowerMode.Normal,
+    { value, effect, duration, mode, feature }: PowerInput,
   ) {
-    super(device, Feature.set_power);
-    if (this.duration < 30) this.duration = 30;
+    super(device, feature);
+
+    if (duration == null) duration = 500;
+    if (duration < 30) duration = 30;
+
+    this.value = value;
+    this.effect = effect || 'smooth';
+    this.duration = duration;
+    this.mode = mode || PowerMode.Normal;
   }
 
   get data(): CommandData {
@@ -37,17 +45,30 @@ export class PowerCommand extends BaseCommand {
   }
 
   private feedback(): void {
-    const result: DeviceState = { power: this.value };
+    if (this.feature === Feature.set_power) return this.mainFeedback();
+    if (this.feature === Feature.bg_set_power) return this.bgFeedback();
+  }
 
-    if (this.mode === PowerMode.ColorTemperature) {
-      result.color_mode = ColorMode.Temperature;
-    } else if (this.mode === PowerMode.HSV) {
-      result.color_mode = ColorMode.HSV;
-    } else if (this.mode === PowerMode.RGB) {
-      result.color_mode = ColorMode.Color;
-    }
+  private mainFeedback(): void {
+    this.device.update({
+      power: this.value,
+      color_mode: this.modeFeedback(),
+    });
+  }
 
-    this.device.update(result);
+  private bgFeedback(): void {
+    this.device.update({
+      bg_power: this.value,
+      bg_lmode: this.modeFeedback(),
+    });
+  }
+
+  private modeFeedback(): ColorMode | undefined {
+    if (this.mode === PowerMode.ColorTemperature) return ColorMode.Temperature;
+    if (this.mode === PowerMode.HSV) return ColorMode.HSV;
+    if (this.mode === PowerMode.RGB) return ColorMode.Color;
+
+    return undefined;
   }
 }
 

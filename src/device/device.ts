@@ -7,11 +7,12 @@ import { CommandCache } from './commands/command-cache';
 import { DeviceState } from './dto/device-state';
 import { Notification } from './commands/notification';
 import { TelnetResponse } from './commands/response';
-import { ToggleCommand } from './commands/implementations/toggle.command';
 import { Command } from './commands/command';
 import { GetPropCommand } from './commands/implementations/get-prop.command';
 import { Param } from './enums/param';
 import { Constants } from '../constants';
+import { CommandInput } from './dto/command-input';
+import { CommandFactory } from './commands/command-factory';
 
 export enum DeviceEvent {
   warning = 'warning',
@@ -22,10 +23,10 @@ export enum DeviceEvent {
 }
 
 export interface Device {
-  get id(): number | undefined;
-  get state(): DeviceState;
-  get ip(): string;
-  get port(): number;
+  readonly id: number | undefined;
+  readonly ip: string;
+  readonly port: number;
+  readonly state: DeviceState;
 
   on(event: DeviceEvent.warning, cb: (message: string) => void): Device;
   on(event: DeviceEvent.update, cb: (state: DeviceState) => void): Device;
@@ -34,51 +35,48 @@ export interface Device {
   on(event: DeviceEvent.debug, cb: (message: string) => void): Device;
   removeListener(event: DeviceEvent, cb: (...args: any[]) => void): Device;
 
-  toggle(): void;
+  command(input: CommandInput): void;
 
+  refresh(): void;
   update(data: DeviceState): void;
 }
 
 export class YeelightDevice implements Device {
-  private _id?: number;
+  public readonly ip: string;
+  public readonly port: number;
+
   private _state: DeviceState = {};
-  private readonly _ip: string;
-  private readonly _port: number;
+  private _id?: number;
 
   private readonly commands: CommandCache;
+  private readonly factory: CommandFactory;
   private readonly client: TelnetClient;
   private readonly emitter = new EventEmitter();
 
   constructor(config: Config, ip: string, port: number | undefined) {
-    this._ip = SetupParser.ip(ip);
-    this._port = port
+    this.ip = SetupParser.ip(ip);
+    this.port = port
       ? SetupParser.port(port)
       : config.get<number>('controlPort');
 
     this.commands = new CommandCache(config);
-    this.client = new TelnetClient(this._ip, this._port, true);
+    this.factory = new CommandFactory(this);
+    this.client = new TelnetClient(this.ip, this.port, true);
     this.setupClient();
   }
   public static fromDiscovery(config: Config, data: DiscoveryData): Device {
     const device = new YeelightDevice(config, data.ip, data.port);
-    const state = data.getState();
-    device._id = state.id;
-    device._state = state;
+    device._id = data.id;
+    device._state = data.state;
 
     return device;
   }
 
-  get id(): number | undefined {
-    return this._id;
-  }
   get state(): DeviceState {
     return { ...this._state };
   }
-  get ip(): string {
-    return this._ip;
-  }
-  get port(): number {
-    return this._port;
+  get id(): number | undefined {
+    return this._id;
   }
 
   update(data: DeviceState): void {
@@ -103,8 +101,13 @@ export class YeelightDevice implements Device {
     this.execute(new GetPropCommand(this, [...Object.values(Param)]));
   }
 
-  toggle(): void {
-    this.execute(new ToggleCommand(this));
+  command(input: CommandInput): void {
+    try {
+      const command = this.factory.get(input);
+      this.execute(command);
+    } catch (error) {
+      this.emitter.emit(DeviceEvent.warning, error);
+    }
   }
 
   private execute(command: Command): void {
@@ -149,7 +152,7 @@ export class YeelightDevice implements Device {
     } catch (error) {
       this.emitter.emit(
         DeviceEvent.debug,
-        `Data is not notification: ${error}`,
+        `Cannot parse notification: ${error}`,
       );
       return false;
     }
@@ -161,7 +164,7 @@ export class YeelightDevice implements Device {
       this.commands.response(response);
       return true;
     } catch (error) {
-      this.emitter.emit(DeviceEvent.debug, `Data is not response: ${error}`);
+      this.emitter.emit(DeviceEvent.debug, `Cannot parse response: ${error}`);
       return false;
     }
   }

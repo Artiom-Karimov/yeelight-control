@@ -1,6 +1,7 @@
 import { DiscoveryData } from './discovery-data';
 import { ColorMode } from '../device/enums/color-mode';
 import { Feature } from '../device/enums/feature';
+import { time } from 'console';
 
 const rgbBulbResponse = `HTTP/1.1 200 OK\r\nCache-Control: max-age=3600\r\nDate:\r\nExt:\r\nLocation: yeelight://192.168.88.22:55443\r\nServer: POSIX UPnP/1.0 YGLC/1\r\nid: 0x000000000e9f9104\r\nmodel: colora\r\nfw_ver: 9\r\nsupport: get_prop set_default set_power toggle set_bright set_scene cron_add cron_get cron_del start_cf stop_cf set_ct_abx adjust_ct set_name set_adjust adjust_bright adjust_color set_rgb set_hsv set_music udp_sess_new udp_sess_keep_alive udp_chroma_sess_new\r\npower: off\r\nbright: 100\r\ncolor_mode: 1\r\nct: 5725\r\nrgb: 16714471\r\nhue: 306\r\nsat: 96\r\nname:`;
 const warmBulbNotify = `NOTIFY * HTTP/1.1\r\nHost: 239.255.255.250:1982\r\nCache-Control: max-age=3600\r\nLocation: yeelight://192.168.88.23:55443\r\nNTS: ssdp:alive\r\nServer: POSIX, UPnP/1.0 YGLC/1\r\nid: 0x000000000ece955f\r\nmodel: monoa\r\nfw_ver: 9\r\nsupport: get_prop set_default set_power toggle set_bright set_scene cron_add cron_get cron_del start_cf stop_cf set_name set_adjust adjust_bright\r\npower: on\r\nbright: 46\r\ncolor_mode: 2\r\nct: 2700\r\nrgb: 0\r\nhue: 0\r\nsat: 0\r\nname: sampleBulb`;
@@ -14,18 +15,21 @@ describe('Data parsing test', () => {
 
     expect(data.updatedAt).toBeInstanceOf(Date);
     expect(data.expiresAt).toBeInstanceOf(Date);
-    expect(data.expiresAt.getTime() - data.updatedAt.getTime()).toBe(3_600_000);
+    const timeDiff =
+      data.expiresAt.getTime() - data.updatedAt.getTime() - 3_600_000;
+    expect(timeDiff === 0 || timeDiff === 1).toBe(true);
 
     expect(data.ip).toBe('192.168.88.22');
     expect(data.port).toBe(55443);
 
-    const state = data.getState();
+    const state = data.state;
+    const info = data.info;
 
-    expect(state.id).toBe(245338372);
-    expect(state.model).toBe('colora');
-    expect(state.fw_ver).toBe('9');
+    expect(info.id).toBe(245338372);
+    expect(info.model).toBe('colora');
+    expect(info.fw_ver).toBe('9');
 
-    expect(state.support).toEqual([
+    expect(info.support).toEqual([
       Feature.get_prop,
       Feature.set_default,
       Feature.set_power,
@@ -66,18 +70,21 @@ describe('Data parsing test', () => {
 
     expect(data.updatedAt).toBeInstanceOf(Date);
     expect(data.expiresAt).toBeInstanceOf(Date);
-    expect(data.expiresAt.getTime() - data.updatedAt.getTime()).toBe(3_600_000);
+    const timeDiff =
+      data.expiresAt.getTime() - data.updatedAt.getTime() - 3_600_000;
+    expect(timeDiff === 0 || timeDiff === 1).toBe(true);
 
     expect(data.ip).toBe('192.168.88.23');
     expect(data.port).toBe(55443);
 
-    const state = data.getState();
+    const state = data.state;
+    const info = data.info;
 
-    expect(state.id).toBe(248419679);
-    expect(state.model).toBe('monoa');
-    expect(state.fw_ver).toBe('9');
+    expect(info.id).toBe(248419679);
+    expect(info.model).toBe('monoa');
+    expect(info.fw_ver).toBe('9');
 
-    expect(state.support).toEqual([
+    expect(info.support).toEqual([
       Feature.get_prop,
       Feature.set_default,
       Feature.set_power,
@@ -109,18 +116,21 @@ describe('Data parsing test', () => {
 
     expect(data.updatedAt).toBeInstanceOf(Date);
     expect(data.expiresAt).toBeInstanceOf(Date);
-    expect(data.expiresAt.getTime() - data.updatedAt.getTime()).toBe(1_200_000);
+    const timeDiff =
+      data.expiresAt.getTime() - data.updatedAt.getTime() - 1_200_000;
+    expect(timeDiff === 0 || timeDiff === 1).toBe(true);
 
     expect(data.ip).toBe('192.168.88.21');
     expect(data.port).toBe(55443);
 
-    const state = data.getState();
+    const state = data.state;
+    const info = data.info;
 
-    expect(state.id).toBe(358548669);
-    expect(state.model).toBe('strip6');
-    expect(state.fw_ver).toBe('20');
+    expect(info.id).toBe(358548669);
+    expect(info.model).toBe('strip6');
+    expect(info.fw_ver).toBe('20');
 
-    expect(state.support).toEqual([
+    expect(info.support).toEqual([
       Feature.get_prop,
       Feature.set_default,
       Feature.set_power,

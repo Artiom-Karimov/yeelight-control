@@ -1,11 +1,11 @@
 import { Device } from '../../device';
-import { Feature } from '../../enums/feature';
+import { ToggleInput } from '../../dto/command-input';
 import { BaseCommand, CommandData } from '../command';
 import { Response } from '../response';
 
 export class ToggleCommand extends BaseCommand {
-  constructor(device: Device) {
-    super(device, Feature.toggle);
+  constructor(device: Device, { feature }: ToggleInput) {
+    super(device, feature);
   }
 
   get data(): CommandData {

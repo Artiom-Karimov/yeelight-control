@@ -1,7 +1,6 @@
 import { Device } from '../../device';
 import { DefaultInput } from '../../dto/command-input';
 import { BaseCommand, CommandData } from '../command';
-import { Response } from '../response';
 
 export class DefaultCommand extends BaseCommand {
   constructor(device: Device, { feature }: DefaultInput) {
@@ -16,7 +15,7 @@ export class DefaultCommand extends BaseCommand {
     };
   }
 
-  response(response: Response): boolean {
-    return this.matches(response);
+  protected feedback(): void {
+    return;
   }
 }

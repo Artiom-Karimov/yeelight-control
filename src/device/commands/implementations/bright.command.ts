@@ -1,6 +1,5 @@
 import { BaseCommand, CommandData } from '../command';
 import { Device } from '../../device';
-import { Response } from '../response';
 import { BrightInput } from '../../dto/command-input';
 import { Feature } from '../../enums/feature';
 import { Effect } from '../../enums/string-values';
@@ -35,16 +34,7 @@ export class BrightCommand extends BaseCommand {
     };
   }
 
-  response(response: Response): boolean {
-    if (!this.matches(response)) return false;
-    if (!response.success)
-      throw new Error(`Command failed: ${JSON.stringify(response.error)}`);
-
-    this.feedback();
-    return true;
-  }
-
-  private feedback(): void {
+  protected feedback(): void {
     if (this.feature === Feature.set_bright)
       return this.device.update({ bright: this.value });
 

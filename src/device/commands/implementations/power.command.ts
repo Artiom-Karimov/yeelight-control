@@ -1,6 +1,5 @@
 import { BaseCommand, CommandData } from '../command';
 import { Device } from '../../device';
-import { Response } from '../response';
 import { ColorMode } from '../../enums/color-mode';
 import { PowerInput } from '../../dto/command-input';
 import { Feature } from '../../enums/feature';
@@ -35,16 +34,7 @@ export class PowerCommand extends BaseCommand {
     };
   }
 
-  response(response: Response): boolean {
-    if (!this.matches(response)) return false;
-    if (!response.success)
-      throw new Error(`Command failed: ${JSON.stringify(response.error)}`);
-
-    this.feedback();
-    return true;
-  }
-
-  private feedback(): void {
+  protected feedback(): void {
     if (this.feature === Feature.set_power) return this.mainFeedback();
     if (this.feature === Feature.bg_set_power) return this.bgFeedback();
   }

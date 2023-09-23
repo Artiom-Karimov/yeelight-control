@@ -3,11 +3,14 @@ import { Feature } from '../enums/feature';
 import { CommandId } from './command-id';
 import { Response } from './response';
 
+/** Data to be sent to device via telnet */
 export interface CommandData {
   id: number;
   method: Feature;
   params: Array<string | number>;
 }
+
+/** Holds a single instruction for the device */
 export interface Command {
   get id(): number;
   get createdAt(): Date;
@@ -44,9 +47,16 @@ export abstract class BaseCommand implements Command {
 
   abstract get data(): CommandData;
 
-  abstract response(response: Response): boolean;
+  response(response: Response): boolean {
+    if (response.id !== this._id) return false;
+    if (!response.success)
+      throw new Error(
+        `Command ${this.feature} failed: ${JSON.stringify(response.error)}`,
+      );
 
-  protected matches(response: Response): boolean {
-    return response.id === this._id;
+    this.feedback(response);
+    return true;
   }
+
+  protected abstract feedback(response: Response): void;
 }

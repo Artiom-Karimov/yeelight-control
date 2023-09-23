@@ -22,21 +22,12 @@ export class GetPropCommand extends BaseCommand {
     };
   }
 
-  response(response: Response): boolean {
-    if (!this.matches(response)) return false;
-    if (!response.success || !response.result)
-      throw new Error(`Command failed: ${JSON.stringify(response.error)}`);
-
-    if (response.result.length !== this.params.length)
+  protected feedback({ result }: Response): void {
+    if (!result || result.length !== this.params.length)
       throw new Error(
-        `Response does not match command: ${JSON.stringify(response.result)}`,
+        `Response does not match command: ${JSON.stringify(result)}`,
       );
 
-    this.feedback(response.result);
-    return true;
-  }
-
-  private feedback(result: string[]): void {
     const state: RawDeviceState = {};
     for (let i = 0; i < this.params.length; i++) {
       state[this.params[i]] = result[i];

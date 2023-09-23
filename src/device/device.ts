@@ -22,6 +22,7 @@ export enum DeviceEvent {
   debug = 'debug',
 }
 
+/** Yeelight bulb, strip or lamp */
 export interface Device {
   readonly id: number | undefined;
   readonly ip: string;

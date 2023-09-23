@@ -2,9 +2,11 @@ import { DeviceInfo, RawDeviceInfo } from '../device/dto/device-info';
 import { DeviceState, RawDeviceState } from '../device/dto/device-state';
 import { ColorMode } from '../device/enums/color-mode';
 import { Feature } from '../device/enums/feature';
-import { FlowParams } from '../device/dto/flow-expression';
+import { FlowParams } from 'src/device/commands/implementations/start-flow.command';
 import { AfterFlowAction } from '../device/enums/after-flow-actiion';
 import { Power } from '../device/enums/string-values';
+import { FlowExpression } from '../device/dto/flow-expression';
+import { YeelightFlowExpression } from './flow-expression';
 
 export class FeedbackParser {
   parseState(data: RawDeviceState): DeviceState {
@@ -67,14 +69,20 @@ export class FeedbackParser {
     return result == null ? undefined : (result as ColorMode);
   }
 
-  private flowParams(value: unknown): FlowParams | undefined {
+  private flowParams(value: unknown): FlowExpression | undefined {
     if (typeof value !== 'string') return undefined;
     const data = value.split(',');
     if (!Array.isArray(data) || data.length < 6) {
       return undefined;
     }
 
-    return [+data[0], +data[1] as AfterFlowAction, data.slice(2).join(',')];
+    const params: FlowParams = [
+      +data[0],
+      +data[1] as AfterFlowAction,
+      data.slice(2).join(','),
+    ];
+
+    return YeelightFlowExpression.fromFeedback(params);
   }
 
   private id(value: unknown): number {

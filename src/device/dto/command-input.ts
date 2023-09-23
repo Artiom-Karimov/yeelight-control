@@ -7,6 +7,7 @@ import {
   Effect,
   Power,
 } from '../enums/string-values';
+import { FlowStep } from './flow-expression';
 
 /** Data to be sent to the device */
 export type CommandInput =
@@ -135,7 +136,7 @@ export interface StartFlowInput {
   action?: AfterFlowAction;
 
   /** Multiple steps array */
-  steps: number[];
+  steps: FlowStep[];
 }
 
 /** Stop color flow */

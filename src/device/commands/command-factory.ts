@@ -1,5 +1,16 @@
 import { Device } from '../device';
-import { CommandInput } from '../dto/command-input';
+import {
+  BrightInput,
+  CommandInput,
+  DefaultInput,
+  HsvInput,
+  PowerInput,
+  RgbInput,
+  StartFlowInput,
+  StopFlowInput,
+  TemperatureInput,
+  ToggleInput,
+} from '../dto/command-input';
 import { Feature } from '../enums/feature';
 import { Command } from './command';
 import { BrightCommand } from './implementations/bright.command';
@@ -7,6 +18,8 @@ import { DefaultCommand } from './implementations/default.command';
 import { HsvCommand } from './implementations/hsv.command';
 import { PowerCommand } from './implementations/power.command';
 import { RgbCommand } from './implementations/rgb.command';
+import { StartFlowCommand } from './implementations/start-flow.command';
+import { StopFlowCommand } from './implementations/stop-flow.command';
 import { TemperatureCommand } from './implementations/temperature.command';
 import { ToggleCommand } from './implementations/toggle.command';
 
@@ -14,33 +27,79 @@ export class CommandFactory {
   constructor(private readonly device: Device) {}
 
   get(input: CommandInput): Command {
-    const feature = input.feature;
-
-    if (feature === Feature.set_ct_abx || feature === Feature.bg_set_ct_abx)
+    if (this.isTemperature(input))
       return new TemperatureCommand(this.device, input);
+    if (this.isRgb(input)) return new RgbCommand(this.device, input);
+    if (this.isHsv(input)) return new HsvCommand(this.device, input);
+    if (this.isBright(input)) return new BrightCommand(this.device, input);
+    if (this.isPower(input)) return new PowerCommand(this.device, input);
+    if (this.isToggle(input)) return new ToggleCommand(this.device, input);
+    if (this.isDefault(input)) return new DefaultCommand(this.device, input);
+    if (this.isStartFlow(input))
+      return new StartFlowCommand(this.device, input);
+    if (this.isStopFlow(input)) return new StopFlowCommand(this.device, input);
 
-    if (feature === Feature.set_rgb || feature === Feature.bg_set_rgb)
-      return new RgbCommand(this.device, input);
+    throw new Error(`Feature ${input.feature} not implemented`);
+  }
 
-    if (feature === Feature.set_hsv || feature === Feature.bg_set_hsv)
-      return new HsvCommand(this.device, input);
+  private isTemperature(input: CommandInput): input is TemperatureInput {
+    return (
+      input.feature === Feature.set_ct_abx ||
+      input.feature === Feature.bg_set_ct_abx
+    );
+  }
 
-    if (feature === Feature.set_bright || feature === Feature.bg_set_bright)
-      return new BrightCommand(this.device, input);
+  private isRgb(input: CommandInput): input is RgbInput {
+    return (
+      input.feature === Feature.set_rgb || input.feature === Feature.bg_set_rgb
+    );
+  }
 
-    if (feature === Feature.set_power || feature === Feature.bg_set_power)
-      return new PowerCommand(this.device, input);
+  private isHsv(input: CommandInput): input is HsvInput {
+    return (
+      input.feature === Feature.set_hsv || input.feature === Feature.bg_set_hsv
+    );
+  }
 
-    if (
-      feature === Feature.toggle ||
-      feature === Feature.bg_toggle ||
-      feature === Feature.dev_toggle
-    )
-      return new ToggleCommand(this.device, input);
+  private isBright(input: CommandInput): input is BrightInput {
+    return (
+      input.feature === Feature.set_bright ||
+      input.feature === Feature.bg_set_bright
+    );
+  }
 
-    if (feature === Feature.set_default || feature === Feature.bg_set_default)
-      return new DefaultCommand(this.device, input);
+  private isPower(input: CommandInput): input is PowerInput {
+    return (
+      input.feature === Feature.set_power ||
+      input.feature === Feature.bg_set_power
+    );
+  }
 
-    throw new Error(`Feature ${feature} not implemented`);
+  private isToggle(input: CommandInput): input is ToggleInput {
+    return (
+      input.feature === Feature.toggle ||
+      input.feature === Feature.bg_toggle ||
+      input.feature === Feature.dev_toggle
+    );
+  }
+
+  private isDefault(input: CommandInput): input is DefaultInput {
+    return (
+      input.feature === Feature.set_default ||
+      input.feature === Feature.bg_set_default
+    );
+  }
+
+  private isStartFlow(input: CommandInput): input is StartFlowInput {
+    return (
+      input.feature === Feature.start_cf ||
+      input.feature === Feature.bg_start_cf
+    );
+  }
+
+  private isStopFlow(input: CommandInput): input is StopFlowInput {
+    return (
+      input.feature === Feature.stop_cf || input.feature === Feature.bg_stop_cf
+    );
   }
 }

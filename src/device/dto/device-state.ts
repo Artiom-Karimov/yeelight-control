@@ -1,6 +1,7 @@
 import { ColorMode } from '../enums/color-mode';
 import { Param } from '../enums/param';
 import { Power } from '../enums/string-values';
+import { FlowExpression } from './flow-expression';
 
 export type RawDeviceState = { [key in Param]?: string };
 type StateMap = { [key in Param]?: any };
@@ -35,7 +36,7 @@ export interface DeviceState extends StateMap {
   delayoff?: number;
 
   /** Current flow parameters (only meaningful when 'flowing' is 1) */
-  flow_params?: Array<string | number>;
+  flow_params?: FlowExpression;
 
   /** 1: Music mode is on / 0: Music mode is off */
   music_on?: number;
@@ -50,7 +51,7 @@ export interface DeviceState extends StateMap {
   bg_flowing?: number;
 
   /** Current flow parameters of background light */
-  bg_flow_params?: Array<string | number>;
+  bg_flow_params?: FlowExpression;
 
   /** Color temperature of background light */
   bg_ct?: number;

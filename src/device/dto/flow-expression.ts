@@ -1,57 +1,44 @@
 import { AfterFlowAction } from '../enums/after-flow-actiion';
-import { ColorMode } from '../enums/color-mode';
 
-export type FlowParams = [
-  count: number,
-  action: AfterFlowAction,
-  expression: string,
-];
-
-export class FlowExpression {
-  constructor(
-    public steps: FlowStep[],
-    public rounds = 0,
-    public action = AfterFlowAction.Stop,
-  ) {}
-
-  static fromFeedback(params: FlowParams): FlowExpression {
-    const steps = FlowStep.fromFeedback(params[2]);
-    return new FlowExpression(steps, params[0], params[1]);
-  }
-
-  get params(): FlowParams {
-    const lines = this.steps.map((s) => s.line);
-    const expression = lines.join(',');
-    return [this.rounds, this.action, expression];
-  }
+export enum FlowStepMode {
+  /** RGB value */
+  rgb = 1,
+  /** ColorTemperature value */
+  temperature = 2,
+  /** Wait for specified duration */
+  sleep = 7,
 }
 
-export class FlowStep {
-  constructor(
-    public duration: number,
-    public mode: ColorMode,
-    public value: number,
-    public brightness: number,
-  ) {}
+/** Representation of flow sequence */
+export interface FlowExpression {
+  /** Number of cycles before stop. 0 means infinite. */
+  readonly count: number;
 
-  static fromFeedback(expression: string): Array<FlowStep> {
-    const elements = expression.split(',');
-    if (!elements.length || elements.length % 4 !== 0)
-      throw new Error(`Illegal flow expression: ${expression}`);
+  /** State after stop. Default is 1.
+   *
+   * 0: Recover to the state before, 1: Stop at the last position, 2: Turn off the light */
+  readonly action: AfterFlowAction;
 
-    const result = new Array<FlowStep>();
-    while (elements.length > 3) {
-      const duration = +elements.shift()!;
-      const mode = +elements.shift()!;
-      const value = +elements.shift()!;
-      const brightness = +elements.shift()!;
-      result.push(new FlowStep(duration, mode, value, brightness));
-    }
+  /** Multiple steps array */
+  readonly steps: FlowStep[];
+}
 
-    return result;
-  }
+/** Color flow step */
+export interface FlowStep {
+  /** Transition time in milliseconds.
+   * Ignored when effect is 'sudden'. If undefined, set to 500 */
+  readonly duration: number;
 
-  get line(): string {
-    return `${this.duration},${this.mode},${this.value},${this.brightness}`;
-  }
+  /** Step mode.
+   *
+   * 1: RGB, 2: ColorTemperature, 7: Sleep
+   */
+  readonly mode: FlowStepMode;
+
+  /** Mode-specific value.
+   * 0 ~ 0xFFFFFF for RGB, 1700 ~ 6500 for ColorTemperature, always 0 for sleep  */
+  readonly value: number;
+
+  /** Brightness in percent: 0 ~ 100 */
+  readonly brightness: number;
 }

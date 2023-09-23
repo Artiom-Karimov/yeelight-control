@@ -3,7 +3,9 @@ import { Param } from '../enums/param';
 import { Power } from '../enums/string-values';
 
 export type RawDeviceState = { [key in Param]?: string };
+type StateMap = { [key in Param]?: any };
 
+/** Current device status */
 export interface DeviceState extends StateMap {
   /** Power state */
   power?: Power;
@@ -74,7 +76,3 @@ export interface DeviceState extends StateMap {
   /** 0: daylight mode / 1: moonlight mode (ceiling light only) */
   active_mode?: number;
 }
-
-type StateMap = {
-  [key in Param]?: any;
-};

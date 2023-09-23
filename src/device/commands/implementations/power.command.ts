@@ -1,5 +1,6 @@
-import { BaseCommand, CommandData } from '../command';
-import { Device } from '../../device';
+import { CommandData } from '../command';
+import { BaseCommand } from '../base-command';
+import { Device } from 'src/device/device';
 import { ColorMode } from '../../enums/color-mode';
 import { PowerInput } from '../../dto/command-input';
 import { Feature } from '../../enums/feature';
@@ -9,7 +10,7 @@ export class PowerCommand extends BaseCommand {
   private readonly value: Power;
   private readonly effect: Effect;
   private readonly duration: number;
-  private readonly mode: PowerMode;
+  private readonly mode: PowerOnMode;
 
   constructor(
     device: Device,
@@ -23,7 +24,7 @@ export class PowerCommand extends BaseCommand {
     this.value = value;
     this.effect = effect || 'smooth';
     this.duration = duration;
-    this.mode = mode || PowerMode.Normal;
+    this.mode = mode || PowerOnMode.Normal;
   }
 
   get data(): CommandData {
@@ -54,15 +55,16 @@ export class PowerCommand extends BaseCommand {
   }
 
   private modeFeedback(): ColorMode | undefined {
-    if (this.mode === PowerMode.ColorTemperature) return ColorMode.Temperature;
-    if (this.mode === PowerMode.HSV) return ColorMode.HSV;
-    if (this.mode === PowerMode.RGB) return ColorMode.Color;
+    if (this.mode === PowerOnMode.ColorTemperature)
+      return ColorMode.Temperature;
+    if (this.mode === PowerOnMode.HSV) return ColorMode.HSV;
+    if (this.mode === PowerOnMode.RGB) return ColorMode.Color;
 
     return undefined;
   }
 }
 
-export enum PowerMode {
+export enum PowerOnMode {
   Normal = 0,
   ColorTemperature = 1,
   RGB = 2,

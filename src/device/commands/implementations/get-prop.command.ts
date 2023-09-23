@@ -1,9 +1,10 @@
 import { FeedbackParser } from '../../../utils/feedback-value-parser';
-import { Device } from '../../device';
+import { Device } from 'src/device/device';
 import { RawDeviceState } from '../../dto/device-state';
 import { Feature } from '../../enums/feature';
 import { Param } from '../../enums/param';
-import { BaseCommand, CommandData } from '../command';
+import { CommandData } from '../command';
+import { BaseCommand } from '../base-command';
 import { Response } from '../response';
 
 export class GetPropCommand extends BaseCommand {

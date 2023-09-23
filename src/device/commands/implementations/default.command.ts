@@ -1,6 +1,7 @@
-import { Device } from '../../device';
+import { Device } from 'src/device/device';
 import { DefaultInput } from '../../dto/command-input';
-import { BaseCommand, CommandData } from '../command';
+import { CommandData } from '../command';
+import { BaseCommand } from '../base-command';
 
 export class DefaultCommand extends BaseCommand {
   constructor(device: Device, { feature }: DefaultInput) {

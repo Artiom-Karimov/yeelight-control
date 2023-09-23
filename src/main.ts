@@ -1,5 +1,6 @@
 import { Yeelight } from './yeelight';
-import { Device, DeviceEvent } from './device/device';
+import { DeviceEvent } from './device/device';
+import { Device } from './device/device';
 import { Feature } from './device/enums/feature';
 
 const effect = (device: Device) => {

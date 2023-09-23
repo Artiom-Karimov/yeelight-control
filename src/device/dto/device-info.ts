@@ -2,6 +2,7 @@ import { Feature } from '../enums/feature';
 
 export type RawDeviceInfo = { [key in keyof DeviceInfo]: any };
 
+/** Information parsed by multicast discovery */
 export interface DeviceInfo {
   /** Unique device id */
   id: number;

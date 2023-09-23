@@ -1,6 +1,7 @@
-import { Device } from '../../device';
+import { Device } from 'src/device/device';
 import { ToggleInput } from '../../dto/command-input';
-import { BaseCommand, CommandData } from '../command';
+import { CommandData } from '../command';
+import { BaseCommand } from '../base-command';
 
 export class ToggleCommand extends BaseCommand {
   constructor(device: Device, { feature }: ToggleInput) {

@@ -1,6 +1,7 @@
 import { Config } from '../config';
 import { DiscoveryData } from '../discovery/discovery-data';
-import { Device, YeelightDevice } from './device';
+import { YeelightDevice } from './yeelight.device';
+import { Device } from './device';
 
 export class DeviceList {
   private readonly list = new Array<Device>();

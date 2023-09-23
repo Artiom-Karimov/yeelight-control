@@ -1,11 +1,14 @@
 import { Device } from '../device';
 import {
   BrightInput,
+  ClearOffDelayInput,
   CommandInput,
   DefaultInput,
   HsvInput,
+  OffDelayInput,
   PowerInput,
   RgbInput,
+  SceneInput,
   StartFlowInput,
   StopFlowInput,
   TemperatureInput,
@@ -14,10 +17,13 @@ import {
 import { Feature } from '../enums/feature';
 import { Command } from './command';
 import { BrightCommand } from './implementations/bright.command';
+import { ClearOffDelayCommand } from './implementations/clear-off-delay.command';
 import { DefaultCommand } from './implementations/default.command';
 import { HsvCommand } from './implementations/hsv.command';
+import { OffDelayCommand } from './implementations/off-delay.command';
 import { PowerCommand } from './implementations/power.command';
 import { RgbCommand } from './implementations/rgb.command';
+import { SceneCommand } from './implementations/scene.command';
 import { StartFlowCommand } from './implementations/start-flow.command';
 import { StopFlowCommand } from './implementations/stop-flow.command';
 import { TemperatureCommand } from './implementations/temperature.command';
@@ -38,6 +44,11 @@ export class CommandFactory {
     if (this.isStartFlow(input))
       return new StartFlowCommand(this.device, input);
     if (this.isStopFlow(input)) return new StopFlowCommand(this.device, input);
+    if (this.isScene(input))
+      return new SceneCommand(this.device, this.get(input.command), input);
+    if (this.isDelay(input)) return new OffDelayCommand(this.device, input);
+    if (this.isClearDelay(input))
+      return new ClearOffDelayCommand(this.device, input);
 
     throw new Error(`Feature ${input.feature} not implemented`);
   }
@@ -101,5 +112,20 @@ export class CommandFactory {
     return (
       input.feature === Feature.stop_cf || input.feature === Feature.bg_stop_cf
     );
+  }
+
+  private isScene(input: CommandInput): input is SceneInput {
+    return (
+      input.feature === Feature.set_scene ||
+      input.feature === Feature.bg_set_scene
+    );
+  }
+
+  private isDelay(input: CommandInput): input is OffDelayInput {
+    return input.feature === Feature.cron_add;
+  }
+
+  private isClearDelay(input: CommandInput): input is ClearOffDelayInput {
+    return input.feature === Feature.cron_del;
   }
 }

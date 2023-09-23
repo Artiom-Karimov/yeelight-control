@@ -2,6 +2,8 @@ import { DeviceInfo, RawDeviceInfo } from '../device/dto/device-info';
 import { DeviceState, RawDeviceState } from '../device/dto/device-state';
 import { FeedbackParser } from '../utils/feedback-value-parser';
 
+/** This object is genetrated by discovery mechanism.
+ * It can be used to connect new device */
 export class DiscoveryData {
   public updatedAt: Date;
   public expiresAt: Date;

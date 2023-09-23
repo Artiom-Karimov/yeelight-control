@@ -36,7 +36,7 @@ export class Yeelight {
 
   on(
     event: YeelightEvent.discovery,
-    cb: (data: DiscoveryData[]) => void,
+    cb: (devices: DiscoveryData[]) => void,
   ): Yeelight;
 
   on(event: YeelightEvent, cb: (...args: any[]) => void): Yeelight {

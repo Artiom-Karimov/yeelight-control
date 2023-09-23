@@ -2,7 +2,7 @@ import {
   FlowExpression,
   FlowStep,
   FlowStepMode,
-} from 'src/device/dto/flow-expression';
+} from '../device/dto/flow-expression';
 import { FlowParams } from '../device/commands/implementations/start-flow.command';
 import { AfterFlowAction } from '../device/enums/after-flow-actiion';
 

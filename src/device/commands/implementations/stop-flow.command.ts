@@ -1,4 +1,4 @@
-import { Device } from 'src/device/device';
+import { Device } from '../../device';
 import { StopFlowInput } from '../../dto/command-input';
 import { CommandData } from '../command';
 import { BaseCommand } from '../base-command';

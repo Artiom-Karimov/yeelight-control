@@ -1,22 +1,26 @@
 import { Device } from '../../device';
-import { ClearOffDelayInput } from '../../dto/command-input';
+import { NameInput } from '../../dto/command-input';
 import { CommandData } from '../command';
 import { BaseCommand } from '../base-command';
 
-export class ClearOffDelayCommand extends BaseCommand {
-  constructor(device: Device, { feature }: ClearOffDelayInput) {
+export class NameCommand extends BaseCommand {
+  private readonly name: string;
+
+  constructor(device: Device, { feature, name }: NameInput) {
     super(device, feature);
+
+    this.name = name;
   }
 
   get data(): CommandData {
     return {
       id: this._id,
       method: this._feature,
-      params: [0],
+      params: [this.name],
     };
   }
 
   protected feedback(): void {
-    this.device.update({ delayoff: 0 });
+    this.device.update({ name: this.name });
   }
 }

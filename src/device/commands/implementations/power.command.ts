@@ -1,6 +1,6 @@
 import { CommandData } from '../command';
 import { BaseCommand } from '../base-command';
-import { Device } from 'src/device/device';
+import { Device } from '../../device';
 import { ColorMode } from '../../enums/color-mode';
 import { PowerInput } from '../../dto/command-input';
 import { Feature } from '../../enums/feature';

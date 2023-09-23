@@ -1,10 +1,10 @@
 import { Device } from '../../device';
 import { StartFlowInput } from '../../dto/command-input';
-import { YeelightFlowExpression } from 'src/utils/flow-expression';
 import { AfterFlowAction } from '../../enums/after-flow-actiion';
 import { BaseCommand } from '../base-command';
 import { CommandData } from '../command';
 import { Feature } from '../../enums/feature';
+import { YeelightFlowExpression } from '../../../utils/flow-expression';
 
 /** Flow command params for telnet */
 export type FlowParams = [

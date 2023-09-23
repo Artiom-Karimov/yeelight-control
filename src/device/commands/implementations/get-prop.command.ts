@@ -1,5 +1,5 @@
 import { FeedbackParser } from '../../../utils/feedback-value-parser';
-import { Device } from 'src/device/device';
+import { Device } from '../../device';
 import { RawDeviceState } from '../../dto/device-state';
 import { Feature } from '../../enums/feature';
 import { Param } from '../../enums/param';

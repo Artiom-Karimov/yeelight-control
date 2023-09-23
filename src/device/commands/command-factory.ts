@@ -1,10 +1,15 @@
 import { Device } from '../device';
 import {
+  AdjustBrightInput,
+  AdjustColorInput,
+  AdjustInput,
+  AdjustTempInput,
   BrightInput,
   ClearOffDelayInput,
   CommandInput,
   DefaultInput,
   HsvInput,
+  NameInput,
   OffDelayInput,
   PowerInput,
   RgbInput,
@@ -16,10 +21,15 @@ import {
 } from '../dto/command-input';
 import { Feature } from '../enums/feature';
 import { Command } from './command';
+import { AdjustBrightCommand } from './implementations/adjust-bright.command';
+import { AdjustColorCommand } from './implementations/adjust-color.command';
+import { AdjustTempCommand } from './implementations/adjust-temp.command';
+import { AdjustCommand } from './implementations/adjust.command';
 import { BrightCommand } from './implementations/bright.command';
 import { ClearOffDelayCommand } from './implementations/clear-off-delay.command';
 import { DefaultCommand } from './implementations/default.command';
 import { HsvCommand } from './implementations/hsv.command';
+import { NameCommand } from './implementations/name.command';
 import { OffDelayCommand } from './implementations/off-delay.command';
 import { PowerCommand } from './implementations/power.command';
 import { RgbCommand } from './implementations/rgb.command';
@@ -49,8 +59,16 @@ export class CommandFactory {
     if (this.isDelay(input)) return new OffDelayCommand(this.device, input);
     if (this.isClearDelay(input))
       return new ClearOffDelayCommand(this.device, input);
+    if (this.isName(input)) return new NameCommand(this.device, input);
+    if (this.isAdjust(input)) return new AdjustCommand(this.device, input);
+    if (this.isAdjustBright(input))
+      return new AdjustBrightCommand(this.device, input);
+    if (this.isAdjustTemp(input))
+      return new AdjustTempCommand(this.device, input);
+    if (this.isAdjustColor(input))
+      return new AdjustColorCommand(this.device, input);
 
-    throw new Error(`Feature ${input.feature} not implemented`);
+    throw new Error(`Feature not implemented`);
   }
 
   private isTemperature(input: CommandInput): input is TemperatureInput {
@@ -127,5 +145,37 @@ export class CommandFactory {
 
   private isClearDelay(input: CommandInput): input is ClearOffDelayInput {
     return input.feature === Feature.cron_del;
+  }
+
+  private isName(input: CommandInput): input is NameInput {
+    return input.feature === Feature.set_name;
+  }
+
+  private isAdjust(input: CommandInput): input is AdjustInput {
+    return (
+      input.feature === Feature.set_adjust ||
+      input.feature === Feature.bg_set_adjust
+    );
+  }
+
+  private isAdjustBright(input: CommandInput): input is AdjustBrightInput {
+    return (
+      input.feature === Feature.adjust_bright ||
+      input.feature === Feature.bg_adjust_bright
+    );
+  }
+
+  private isAdjustTemp(input: CommandInput): input is AdjustTempInput {
+    return (
+      input.feature === Feature.adjust_ct ||
+      input.feature === Feature.bg_adjust_ct
+    );
+  }
+
+  private isAdjustColor(input: CommandInput): input is AdjustColorInput {
+    return (
+      input.feature === Feature.adjust_color ||
+      input.feature === Feature.bg_adjust_color
+    );
   }
 }

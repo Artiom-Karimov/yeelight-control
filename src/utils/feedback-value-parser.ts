@@ -2,11 +2,11 @@ import { DeviceInfo, RawDeviceInfo } from '../device/dto/device-info';
 import { DeviceState, RawDeviceState } from '../device/dto/device-state';
 import { ColorMode } from '../device/enums/color-mode';
 import { Feature } from '../device/enums/feature';
-import { FlowParams } from 'src/device/commands/implementations/start-flow.command';
 import { AfterFlowAction } from '../device/enums/after-flow-actiion';
 import { Power } from '../device/enums/string-values';
 import { FlowExpression } from '../device/dto/flow-expression';
 import { YeelightFlowExpression } from './flow-expression';
+import { FlowParams } from '../device/commands/implementations/start-flow.command';
 
 export class FeedbackParser {
   parseState(data: RawDeviceState): DeviceState {

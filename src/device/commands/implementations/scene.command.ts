@@ -1,6 +1,6 @@
 import { Command, CommandData } from '../command';
 import { BaseCommand } from '../base-command';
-import { Device } from 'src/device/device';
+import { Device } from '../../device';
 import {
   CommandInput,
   HsvInput,

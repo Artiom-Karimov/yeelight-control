@@ -25,8 +25,7 @@ export interface FlowExpression {
 
 /** Color flow step */
 export interface FlowStep {
-  /** Transition time in milliseconds.
-   * Ignored when effect is 'sudden'. If undefined, set to 500 */
+  /** Step time in milliseconds */
   readonly duration: number;
 
   /** Step mode.

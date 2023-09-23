@@ -26,7 +26,7 @@ export type CommandInput =
   | AdjustInput
   | NameInput
   | AdjustBrightInput
-  | AdjustTemperatureInput
+  | AdjustTempInput
   | AdjustColorInput;
 
 /** Set color temperature */
@@ -199,7 +199,7 @@ export interface AdjustBrightInput {
 }
 
 /** Change color temperature by value */
-export interface AdjustTemperatureInput {
+export interface AdjustTempInput {
   feature: Feature.adjust_ct | Feature.bg_adjust_ct;
 
   /** Adjust value: -100 ~ 100 */

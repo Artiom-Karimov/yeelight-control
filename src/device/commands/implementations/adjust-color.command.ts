@@ -7,20 +7,12 @@ export class AdjustColorCommand extends BaseCommand {
   private readonly percentage: number;
   private readonly duration: number;
 
-  constructor(
-    device: Device,
-    { feature, percentage, duration }: AdjustColorInput,
-  ) {
+  constructor(device: Device, { feature, duration }: AdjustColorInput) {
     super(device, feature);
-
-    if (percentage < -100 || percentage > 100)
-      throw new Error(
-        `Illegal percentage: ${percentage}, should be -100 ~ 100`,
-      );
 
     if (duration == null) duration = 500;
 
-    this.percentage = percentage;
+    this.percentage = 20; // Doesn't affect anything
     this.duration = duration;
   }
 

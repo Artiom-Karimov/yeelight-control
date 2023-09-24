@@ -1,6 +1,6 @@
-import { Device } from '../src/device/device';
-import { DiscoveryData } from '../src/discovery/discovery-data';
-import { Yeelight, YeelightEvent } from '../src/yeelight';
+import { Device } from '../device/device';
+import { DiscoveryData } from '../discovery/discovery-data';
+import { Yeelight } from '../yeelight';
 
 const connectedDevices = new Set<Device>();
 
@@ -20,7 +20,7 @@ const add = (data: DiscoveryData[], yeelight: Yeelight): void => {
 
 export const start = () => {
   const yeelight = new Yeelight();
-  yeelight.on(YeelightEvent.discovery, (devices) => add(devices, yeelight));
+  yeelight.on('discovery', (devices) => add(devices, yeelight));
 };
 
 start();

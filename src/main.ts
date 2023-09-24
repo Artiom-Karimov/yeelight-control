@@ -1,5 +1,4 @@
 import { Yeelight } from './yeelight';
-import { DeviceEvent } from './device/device';
 import { Device } from './device/device';
 import { Feature } from './device/enums/feature';
 
@@ -12,9 +11,7 @@ const effect = (device: Device) => {
   setInterval(
     () =>
       device.command({
-        feature: Feature.set_adjust,
-        action: 'circle',
-        prop: 'color',
+        feature: Feature.adjust_color,
       }),
     5000,
   );
@@ -24,9 +21,9 @@ export const start = () => {
   const yeelight = new Yeelight();
   const device = yeelight.connectOne('192.168.88.22');
   device
-    .on(DeviceEvent.connect, () => effect(device))
-    .on(DeviceEvent.update, (data) => console.log(data))
-    .on(DeviceEvent.debug, (message) => console.log(message));
+    .on('connect', () => effect(device))
+    .on('update', (data) => console.log(data))
+    .on('debug', (message) => console.log(message));
 };
 
 start();

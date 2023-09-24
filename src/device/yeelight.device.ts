@@ -60,7 +60,7 @@ export class YeelightDevice implements Device {
       if (data[param] != null) this._state[param] = data[param] as any;
     }
 
-    this.emitter.emit(DeviceEvent.update, this.state);
+    this.emitter.emit('update', this.state);
   }
 
   on(event: DeviceEvent, cb: (...args: any[]) => void): Device {
@@ -72,7 +72,7 @@ export class YeelightDevice implements Device {
     return this;
   }
 
-  refresh(): void {
+  requestState(): void {
     this.execute(new GetPropCommand(this, [...Object.values(Param)]));
   }
 
@@ -81,14 +81,14 @@ export class YeelightDevice implements Device {
       const command = this.factory.get(input);
       this.execute(command);
     } catch (error) {
-      this.emitter.emit(DeviceEvent.warning, error);
+      this.emitter.emit('warning', error);
     }
   }
 
   private execute(command: Command): void {
     this.commands.add(command);
     this.client.send(command.data);
-    this.emitter.emit(DeviceEvent.debug, `Sent: ${command.data}`);
+    this.emitter.emit('debug', `Sent: ${command.data}`);
   }
 
   private setupClient(): void {
@@ -101,22 +101,22 @@ export class YeelightDevice implements Device {
   }
 
   private onConnect = () => {
-    setTimeout(() => this.refresh(), Constants.minTimeout);
-    this.emitter.emit(DeviceEvent.connect);
+    setTimeout(() => this.requestState(), Constants.minTimeout);
+    this.emitter.emit('connect');
   };
 
   private onData = (data: string) => {
-    this.emitter.emit(DeviceEvent.debug, `Received: ${data}`);
+    this.emitter.emit('debug', `Received: ${data}`);
     if (this.tryParseNotification(data) || this.tryParseResponse(data)) return;
-    this.emitter.emit(DeviceEvent.warning, `Unrecognized response: ${data}`);
+    this.emitter.emit('warning', `Unrecognized response: ${data}`);
   };
 
   private onError = (err: NodeJS.ErrnoException) => {
-    this.emitter.emit(DeviceEvent.warning, `Socket error: ${err.code}`);
+    this.emitter.emit('warning', `Socket error: ${err.code}`);
   };
 
   private onClose = () => {
-    this.emitter.emit(DeviceEvent.disconnect);
+    this.emitter.emit('disconnect');
   };
 
   private tryParseNotification(data: string): boolean {
@@ -125,10 +125,7 @@ export class YeelightDevice implements Device {
       this.update(notification.state);
       return true;
     } catch (error) {
-      this.emitter.emit(
-        DeviceEvent.debug,
-        `Cannot parse notification: ${error}`,
-      );
+      this.emitter.emit('debug', `Cannot parse notification: ${error}`);
       return false;
     }
   }
@@ -139,7 +136,7 @@ export class YeelightDevice implements Device {
       this.commands.response(response);
       return true;
     } catch (error) {
-      this.emitter.emit(DeviceEvent.debug, `Cannot parse response: ${error}`);
+      this.emitter.emit('debug', `Cannot parse response: ${error}`);
       return false;
     }
   }

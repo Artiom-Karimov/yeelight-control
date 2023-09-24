@@ -14,5 +14,6 @@
     "incremental": true,
     "skipLibCheck": true,
     "strict": true
-  }
+  },
+  "exclude": ["dist"]
 }

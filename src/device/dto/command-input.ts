@@ -194,7 +194,7 @@ export interface AdjustBrightInput {
   percentage: number;
 
   /** Transition time in milliseconds.
-   * Ignored when effect is 'sudden'. If undefined, set to 500 */
+   * If undefined, set to 500 */
   duration?: number;
 }
 
@@ -206,7 +206,7 @@ export interface AdjustTempInput {
   percentage: number;
 
   /** Transition time in milliseconds.
-   * Ignored when effect is 'sudden'. If undefined, set to 500 */
+   * If undefined, set to 500 */
   duration?: number;
 }
 
@@ -214,10 +214,7 @@ export interface AdjustTempInput {
 export interface AdjustColorInput {
   feature: Feature.adjust_color | Feature.bg_adjust_color;
 
-  /** Adjust value: -100 ~ 100 */
-  percentage: number;
-
   /** Transition time in milliseconds.
-   * Ignored when effect is 'sudden'. If undefined, set to 500 */
+   * If undefined, set to 500 */
   duration?: number;
 }

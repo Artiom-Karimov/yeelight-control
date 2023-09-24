@@ -31,6 +31,7 @@ export class Discovery extends EventEmitter {
   }
 
   private error(err: Error): void {
+    // TODO: Implement reconnect procedure
     this.emit('error', err);
   }
 

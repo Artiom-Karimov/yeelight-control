@@ -1,5 +1,5 @@
-import { DiscoveryData } from '../src/discovery/discovery-data';
-import { Yeelight, YeelightEvent } from '../src/yeelight';
+import { DiscoveryData } from '../discovery/discovery-data';
+import { Yeelight } from '../yeelight';
 
 const printAddresses = (devices: DiscoveryData[]): void => {
   console.log('New discovery:');
@@ -13,7 +13,7 @@ const printAddresses = (devices: DiscoveryData[]): void => {
 If something goes wrong, make sure that your router allows multicast */
 export const start = () => {
   const yeelight = new Yeelight();
-  yeelight.on(YeelightEvent.discovery, printAddresses);
+  yeelight.on('discovery', printAddresses);
 };
 
 start();

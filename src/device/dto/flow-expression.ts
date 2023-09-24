@@ -4,7 +4,7 @@ export enum FlowStepMode {
   /** RGB value */
   rgb = 1,
   /** ColorTemperature value */
-  temperature = 2,
+  colorTemp = 2,
   /** Wait for specified duration */
   sleep = 7,
 }

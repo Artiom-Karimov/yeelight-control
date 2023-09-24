@@ -1,18 +1,18 @@
 import { CommandData } from '../command';
 import { BaseCommand } from '../base-command';
 import { Device } from '../../device';
-import { TemperatureInput } from '../../dto/command-input';
+import { ColorTempInput } from '../../dto/command-input';
 import { Feature } from '../../enums/feature';
 import { Effect } from '../../enums/string-values';
 
-export class TemperatureCommand extends BaseCommand {
+export class ColorTempCommand extends BaseCommand {
   private readonly value: number;
   private readonly effect: Effect;
   private readonly duration: number;
 
   constructor(
     device: Device,
-    { value, effect, duration, feature }: TemperatureInput,
+    { value, effect, duration, feature }: ColorTempInput,
   ) {
     super(device, feature);
 

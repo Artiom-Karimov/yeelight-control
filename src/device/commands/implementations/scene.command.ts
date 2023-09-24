@@ -7,11 +7,11 @@ import {
   OffDelayInput,
   RgbInput,
   SceneInput,
-  TemperatureInput,
+  ColorTempInput,
 } from '../../dto/command-input';
 import { RgbCommand } from './rgb.command';
 import { HsvCommand } from './hsv.command';
-import { TemperatureCommand } from './temperature.command';
+import { ColorTempCommand } from './color-temp.command';
 import { StartFlowCommand } from './start-flow.command';
 import { OffDelayCommand } from './off-delay.command';
 
@@ -54,7 +54,7 @@ export class SceneCommand extends BaseCommand {
   private getClass(): SceneClass {
     if (this.subCommand instanceof RgbCommand) return 'color';
     if (this.subCommand instanceof HsvCommand) return 'hsv';
-    if (this.subCommand instanceof TemperatureCommand) return 'ct';
+    if (this.subCommand instanceof ColorTempCommand) return 'ct';
     if (this.subCommand instanceof StartFlowCommand) return 'cf';
     if (this.subCommand instanceof OffDelayCommand) return 'auto_delay_off';
 
@@ -82,7 +82,7 @@ export class SceneCommand extends BaseCommand {
   }
 
   private getCtParams(): Array<number | string> {
-    const input = this.subInput as TemperatureInput;
+    const input = this.subInput as ColorTempInput;
     return [this.class, input.value, this.brightness];
   }
 

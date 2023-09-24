@@ -3,7 +3,7 @@ import {
   AdjustBrightInput,
   AdjustColorInput,
   AdjustInput,
-  AdjustTempInput,
+  AdjustColorTempInput,
   BrightInput,
   ClearOffDelayInput,
   CommandInput,
@@ -16,7 +16,7 @@ import {
   SceneInput,
   StartFlowInput,
   StopFlowInput,
-  TemperatureInput,
+  ColorTempInput,
   ToggleInput,
 } from '../dto/command-input';
 import { Feature } from '../enums/feature';
@@ -36,7 +36,7 @@ import { RgbCommand } from './implementations/rgb.command';
 import { SceneCommand } from './implementations/scene.command';
 import { StartFlowCommand } from './implementations/start-flow.command';
 import { StopFlowCommand } from './implementations/stop-flow.command';
-import { TemperatureCommand } from './implementations/temperature.command';
+import { ColorTempCommand } from './implementations/color-temp.command';
 import { ToggleCommand } from './implementations/toggle.command';
 
 export class CommandFactory {
@@ -44,7 +44,7 @@ export class CommandFactory {
 
   get(input: CommandInput): Command {
     if (this.isTemperature(input))
-      return new TemperatureCommand(this.device, input);
+      return new ColorTempCommand(this.device, input);
     if (this.isRgb(input)) return new RgbCommand(this.device, input);
     if (this.isHsv(input)) return new HsvCommand(this.device, input);
     if (this.isBright(input)) return new BrightCommand(this.device, input);
@@ -71,7 +71,7 @@ export class CommandFactory {
     throw new Error(`Feature not implemented`);
   }
 
-  private isTemperature(input: CommandInput): input is TemperatureInput {
+  private isTemperature(input: CommandInput): input is ColorTempInput {
     return (
       input.feature === Feature.set_ct_abx ||
       input.feature === Feature.bg_set_ct_abx
@@ -165,7 +165,7 @@ export class CommandFactory {
     );
   }
 
-  private isAdjustTemp(input: CommandInput): input is AdjustTempInput {
+  private isAdjustTemp(input: CommandInput): input is AdjustColorTempInput {
     return (
       input.feature === Feature.adjust_ct ||
       input.feature === Feature.bg_adjust_ct

@@ -1,4 +1,4 @@
-import { AdjustTempInput } from '../../dto/command-input';
+import { AdjustColorTempInput } from '../../dto/command-input';
 import { CommandData } from '../command';
 import { BaseCommand } from '../base-command';
 import { Device } from '../../device';
@@ -9,7 +9,7 @@ export class AdjustTempCommand extends BaseCommand {
 
   constructor(
     device: Device,
-    { feature, percentage, duration }: AdjustTempInput,
+    { feature, percentage, duration }: AdjustColorTempInput,
   ) {
     super(device, feature);
 

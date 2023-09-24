@@ -11,7 +11,7 @@ import { FlowStep } from './flow-expression';
 
 /** Data to be sent to the device */
 export type CommandInput =
-  | TemperatureInput
+  | ColorTempInput
   | RgbInput
   | HsvInput
   | BrightInput
@@ -26,11 +26,11 @@ export type CommandInput =
   | AdjustInput
   | NameInput
   | AdjustBrightInput
-  | AdjustTempInput
+  | AdjustColorTempInput
   | AdjustColorInput;
 
 /** Set color temperature */
-export interface TemperatureInput {
+export interface ColorTempInput {
   feature: Feature.set_ct_abx | Feature.bg_set_ct_abx;
 
   /** Color temperature: 1700 ~ 6500 */
@@ -155,7 +155,7 @@ export interface SceneInput {
   command:
     | RgbInput
     | HsvInput
-    | TemperatureInput
+    | ColorTempInput
     | StartFlowInput
     | OffDelayInput;
 }
@@ -164,7 +164,7 @@ export interface SceneInput {
 export interface OffDelayInput {
   feature: Feature.cron_add;
 
-  /** Number of minutes before off */
+  /** Number of minutes before off (1 ~ 60) */
   minutes: number;
 }
 
@@ -199,7 +199,7 @@ export interface AdjustBrightInput {
 }
 
 /** Change color temperature by value */
-export interface AdjustTempInput {
+export interface AdjustColorTempInput {
   feature: Feature.adjust_ct | Feature.bg_adjust_ct;
 
   /** Adjust value: -100 ~ 100 */

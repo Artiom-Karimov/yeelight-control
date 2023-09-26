@@ -1,6 +1,7 @@
 node_modules
 .env
 dist
+lib
 yarn-error.log
 test-files
 tsconfig.tsbuildinfo

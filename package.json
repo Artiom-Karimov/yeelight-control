@@ -36,6 +36,11 @@
     "type": "git",
     "url": "git+https://github.com/Artiom-Karimov/yeelight-control.git"
   },
+  "keywords": [
+    "yeelight",
+    "bulb",
+    "wifi"
+  ],
   "devDependencies": {
     "@types/jest": "^29.5.3",
     "@types/node": "^20.5.0",

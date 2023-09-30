@@ -1,6 +1,7 @@
 ## Typescript-first library for controlling Yeelight devices over LAN (WiFi)
 
 ![Tests](https://github.com/Artiom-Karimov/yeelight-control/actions/workflows/run-tests.yml/badge.svg)
+<a href="https://www.npmjs.com/package/yeelight-control">![npm](https://img.shields.io/npm/v/yeelight-control)</a>
 
 ### Supported features:
 

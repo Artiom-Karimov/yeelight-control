@@ -1,7 +1,6 @@
-import { DiscoveryData } from './discovery-data';
+import { YeelightDiscoveryData } from './yeelight-discovery-data';
 import { ColorMode } from '../device/enums/color-mode';
 import { Feature } from '../device/enums/feature';
-import { time } from 'console';
 
 const rgbBulbResponse = `HTTP/1.1 200 OK\r\nCache-Control: max-age=3600\r\nDate:\r\nExt:\r\nLocation: yeelight://192.168.88.22:55443\r\nServer: POSIX UPnP/1.0 YGLC/1\r\nid: 0x000000000e9f9104\r\nmodel: colora\r\nfw_ver: 9\r\nsupport: get_prop set_default set_power toggle set_bright set_scene cron_add cron_get cron_del start_cf stop_cf set_ct_abx adjust_ct set_name set_adjust adjust_bright adjust_color set_rgb set_hsv set_music udp_sess_new udp_sess_keep_alive udp_chroma_sess_new\r\npower: off\r\nbright: 100\r\ncolor_mode: 1\r\nct: 5725\r\nrgb: 16714471\r\nhue: 306\r\nsat: 96\r\nname:`;
 const warmBulbNotify = `NOTIFY * HTTP/1.1\r\nHost: 239.255.255.250:1982\r\nCache-Control: max-age=3600\r\nLocation: yeelight://192.168.88.23:55443\r\nNTS: ssdp:alive\r\nServer: POSIX, UPnP/1.0 YGLC/1\r\nid: 0x000000000ece955f\r\nmodel: monoa\r\nfw_ver: 9\r\nsupport: get_prop set_default set_power toggle set_bright set_scene cron_add cron_get cron_del start_cf stop_cf set_name set_adjust adjust_bright\r\npower: on\r\nbright: 46\r\ncolor_mode: 2\r\nct: 2700\r\nrgb: 0\r\nhue: 0\r\nsat: 0\r\nname: sampleBulb`;
@@ -10,8 +9,8 @@ const requestMessage = `listening 239.255.255.250 1982\r\nM-SEARCH * HTTP/1.1\r\
 
 describe('Data parsing test', () => {
   test('Should map rgb bulb values', () => {
-    const data = new DiscoveryData(rgbBulbResponse);
-    expect(data).toBeInstanceOf(DiscoveryData);
+    const data = new YeelightDiscoveryData(rgbBulbResponse);
+    expect(data).toBeInstanceOf(YeelightDiscoveryData);
 
     expect(data.updatedAt).toBeInstanceOf(Date);
     expect(data.expiresAt).toBeInstanceOf(Date);
@@ -65,8 +64,8 @@ describe('Data parsing test', () => {
     expect(state.name).toBeUndefined();
   });
   test('Should map warm white bulb values', () => {
-    const data = new DiscoveryData(warmBulbNotify);
-    expect(data).toBeInstanceOf(DiscoveryData);
+    const data = new YeelightDiscoveryData(warmBulbNotify);
+    expect(data).toBeInstanceOf(YeelightDiscoveryData);
 
     expect(data.updatedAt).toBeInstanceOf(Date);
     expect(data.expiresAt).toBeInstanceOf(Date);
@@ -111,8 +110,8 @@ describe('Data parsing test', () => {
     expect(state.name).toBe('sampleBulb');
   });
   test('Should map strip6 values', () => {
-    const data = new DiscoveryData(stripResponse);
-    expect(data).toBeInstanceOf(DiscoveryData);
+    const data = new YeelightDiscoveryData(stripResponse);
+    expect(data).toBeInstanceOf(YeelightDiscoveryData);
 
     expect(data.updatedAt).toBeInstanceOf(Date);
     expect(data.expiresAt).toBeInstanceOf(Date);
@@ -167,7 +166,7 @@ describe('Data parsing test', () => {
   });
   test('Should throw error on request data', () => {
     const shouldFail = () => {
-      new DiscoveryData(requestMessage);
+      new YeelightDiscoveryData(requestMessage);
     };
 
     expect(shouldFail).toThrowError();

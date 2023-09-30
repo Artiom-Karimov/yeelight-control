@@ -1,10 +1,12 @@
 import { DiscoveryData } from './discovery-data';
+import { YeelightDiscoveryData } from './yeelight-discovery-data';
 
 export class DiscoveredList {
   private readonly _map = new Map<number, DiscoveryData>();
 
-  public update(device: DiscoveryData): void {
-    this._map.set(device.id, device);
+  public update(message: string): void {
+    const device = new YeelightDiscoveryData(message);
+    this._map.set(device.id, device.dto);
   }
 
   public get(id: number): DiscoveryData | undefined {

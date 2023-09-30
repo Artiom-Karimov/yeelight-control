@@ -23,7 +23,7 @@ export type YeelightEvent = 'discovery' | 'warning';
 export class Yeelight {
   private readonly config: Config;
   private readonly discovered: DiscoveredList;
-  private readonly discovery: Discovery;
+  private discovery?: Discovery;
   private readonly devices: DeviceList;
 
   private readonly emitter = new EventEmitter();
@@ -31,10 +31,9 @@ export class Yeelight {
   constructor(params?: ConfigParams) {
     this.config = new YeelightConfig(params);
     this.discovered = new DiscoveredList();
-    this.discovery = new Discovery(this.config, this.discovered);
     this.devices = new DeviceList(this.config);
 
-    this.initializeEvents();
+    this.setupDiscovery();
   }
 
   /** Add device to system by known ip/port and connect immediately.
@@ -73,11 +72,19 @@ export class Yeelight {
     return this;
   }
 
-  private initializeEvents(): void {
-    this.discovery.on('update', (data: DiscoveryData[]) =>
+  private setupDiscovery(): void {
+    const disabled = this.config.get<boolean>('disableDiscovery');
+    if (disabled) return;
+
+    this.discovery = new Discovery(this.config, this.discovered);
+    this.initializeEvents(this.discovery);
+  }
+
+  private initializeEvents(discovery: Discovery): void {
+    discovery.on('update', (data: DiscoveryData[]) =>
       this.emitter.emit('discovery', data),
     );
-    this.discovery.on('error', (err) => {
+    discovery.on('error', (err) => {
       this.emitter.emit('warning', err);
     });
   }

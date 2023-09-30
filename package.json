@@ -6,6 +6,7 @@
   "license": "MIT",
   "types": "./lib/cjs/types/index.d.ts",
   "main": "./lib/cjs/index.js",
+  "module": "./lib/esm/index.mjs",
   "exports": {
     ".": {
       "import": {
@@ -27,8 +28,13 @@
     "build:esm": "tsc -p ./tsconfig.esm.json && mv lib/esm/index.js lib/esm/index.mjs",
     "build:cjs": "tsc -p ./tsconfig.cjs.json",
     "prepack": "npm run build",
+    "lint": "eslint ./src --fix",
     "test": "jest",
     "test:watch": "jest --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Artiom-Karimov/yeelight-control.git"
   },
   "devDependencies": {
     "@types/jest": "^29.5.3",

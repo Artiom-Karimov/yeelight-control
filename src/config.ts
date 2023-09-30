@@ -4,6 +4,8 @@ import { SetupParser } from './utils/setup-value-parser';
 export type ConfigParams = {
   /** Device control interface TCP port. Defaults to 55443 */
   controlPort: number;
+  /** If set to true, multicast discovery won't be started */
+  disableDiscovery: boolean;
   /** Multicast port. Defaults to 1982 */
   discoveryPort: number;
   /** Multicast address. Defaults to 239.255.255.250 */
@@ -34,6 +36,7 @@ export class YeelightConfig implements Config {
 
     this._state = {
       controlPort: this.getControlPort(params),
+      disableDiscovery: this.getDisableDiscovery(params),
       discoveryPort: this.getDiscoveryPort(params),
       discoveryIp: this.getAddress(params),
       discoveryHost: this.getHost(params),
@@ -49,6 +52,13 @@ export class YeelightConfig implements Config {
   private getControlPort({ controlPort: port }: Partial<ConfigParams>): number {
     if (port == null) return defaults.controlPort;
     return SetupParser.port(port);
+  }
+
+  private getDisableDiscovery({
+    disableDiscovery,
+  }: Partial<ConfigParams>): boolean {
+    if (disableDiscovery != null) return disableDiscovery;
+    return defaults.disableDiscovery;
   }
 
   private getDiscoveryPort({
@@ -88,6 +98,7 @@ export class YeelightConfig implements Config {
 
 const defaults: ConfigParams = {
   controlPort: 55443,
+  disableDiscovery: false,
   discoveryPort: 1982,
   discoveryIp: '239.255.255.250',
   discoveryHost: '0.0.0.0',

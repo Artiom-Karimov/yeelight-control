@@ -6,6 +6,7 @@ const printAddresses = (devices: DiscoveryData[]): void => {
 
   for (const device of devices) {
     console.log(`${device.ip}:${device.port}, ${device.info.model}`);
+    console.log(`Hue: ${device.state.hue}, Saturation: ${device.state.sat}`);
   }
 };
 

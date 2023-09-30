@@ -1,7 +1,6 @@
 import * as dgram from 'node:dgram';
 import { Config } from '../config';
 import { EventEmitter } from 'node:events';
-import { DiscoveryData } from './discovery-data';
 import { DiscoveredList } from './discovered-list';
 
 export class Discovery extends EventEmitter {
@@ -45,8 +44,7 @@ export class Discovery extends EventEmitter {
 
   private receive(data: Buffer): void {
     try {
-      const device = new DiscoveryData(data.toString());
-      this.list.update(device);
+      this.list.update(data.toString());
       this.emit('update', this.list.getAll());
     } catch (error) {
       return;

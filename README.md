@@ -1,5 +1,7 @@
 ## Typescript-first library for controlling Yeelight devices over LAN (WiFi)
 
+![Tests](https://github.com/Artiom-Karimov/yeelight-control/actions/workflows/run-tests.yml/badge.svg)
+
 ### Supported features:
 
 - Discovery over multicast

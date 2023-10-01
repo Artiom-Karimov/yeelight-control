@@ -1,6 +1,6 @@
 {
   "name": "yeelight-control",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Typescript-first library for controlling Yeelight devices over LAN",
   "author": "Artiom Karimov",
   "license": "MIT",

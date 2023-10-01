@@ -28,7 +28,7 @@ export class Yeelight {
 
   private readonly emitter = new EventEmitter();
 
-  constructor(params?: ConfigParams) {
+  constructor(params?: Partial<ConfigParams>) {
     this.config = new YeelightConfig(params);
     this.discovered = new DiscoveredList();
     this.devices = new DeviceList(this.config);

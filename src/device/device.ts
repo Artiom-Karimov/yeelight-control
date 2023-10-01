@@ -39,6 +39,12 @@ export interface Device {
   /** Send request message to refresh status */
   requestState(): void;
 
+  /** Device connects automatically on create, but you can use disconnect method along with connect if needed. */
+  connect(): Device;
+
+  /** Disconnect control socket. You should use it before removing the device. */
+  disconnect(): Device;
+
   /** Internal use only. On success, Command notifies the device */
   update(data: DeviceState): void;
 }

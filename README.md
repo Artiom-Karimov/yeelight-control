@@ -1,6 +1,7 @@
 ## Typescript-first library for controlling Yeelight devices over LAN (WiFi)
 
-![Tests](https://github.com/Artiom-Karimov/yeelight-control/actions/workflows/run-tests.yml/badge.svg)
+![Tests](https://github.com/Artiom-Karimov/yeelight-control/actions/workflows/run-tests.yml/badge.svg?branch=master)
+![Build](https://github.com/Artiom-Karimov/yeelight-control/actions/workflows/build.yml/badge.svg?branch=master)
 <a href="https://www.npmjs.com/package/yeelight-control">![npm](https://img.shields.io/npm/v/yeelight-control)</a>
 
 ### Supported features:
@@ -10,6 +11,9 @@
 - Automatic device reconnect on network failure or device power cycle
 - Event-driven architecture
 - Command library (no need to memorize protocol details)
+- Background light control features
+- Zero external dependencies
+- Both CommonJS and ESModule supported (require/import)
 
 ### Examples
 
@@ -86,4 +90,42 @@ const start = () => {
 };
 
 start();
+```
+
+#### Do some random stuff
+
+```typescript
+const ip = '192.168.88.22';
+const yeelight = new Yeelight({ disableDiscovery: true });
+const device = yeelight.connectOne(ip);
+
+// do nothing for ms milliseconds
+const wait = async (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
+// do some random stuff
+const sequence = async () => {
+  device.command(CommandLibrary.powerOn());
+
+  await wait(500);
+  device.command(CommandLibrary.setBright(100));
+  device.command(CommandLibrary.setRgb(0x0099ff));
+
+  await wait(1000);
+  device.command(CommandLibrary.setBright(50));
+  device.command(CommandLibrary.setRgb(0xff9900));
+
+  await wait(1000);
+  device.command(CommandLibrary.powerOff);
+
+  await wait(50);
+  device.disconnect();
+
+  await wait(5000);
+  device.connect();
+};
+
+device.on('connect', sequence);
+device.on('connect', () => console.log('connected'));
+device.on('disconnect', () => console.log('disconnected'));
 ```

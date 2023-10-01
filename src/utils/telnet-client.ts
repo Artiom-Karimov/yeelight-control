@@ -105,9 +105,9 @@ export class TelnetClient {
     oldOne.removeListener('data', this.onData);
     oldOne.removeListener('close', this.onClose);
     oldOne.removeListener('connect', this.onConnect);
+    oldOne.removeListener('error', this.onError);
 
     oldOne.end(() => {
-      oldOne.removeListener('error', this.onError);
       oldOne.destroy().unref();
     });
   }

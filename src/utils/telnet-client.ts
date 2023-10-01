@@ -26,15 +26,26 @@ export class TelnetClient {
   ) {}
 
   connect(): TelnetClient {
+    if (this.socket) return this;
+
     this.newSocket();
     this.backoff.reset();
-    this.socket?.connect(this.port, this.address);
+    this.socket!.connect(this.port, this.address);
 
     return this;
   }
+
+  disconnect(): TelnetClient {
+    this.destroySocket();
+    this.emitter.emit('close');
+    return this;
+  }
+
   send(data: string | object): void {
     if (typeof data !== 'string') data = JSON.stringify(data);
-    this.socket?.write(data + '\r\n');
+    if (!this.socket) return;
+
+    this.socket.write(data + '\r\n');
   }
 
   on(event: TelnetEvent.data, cb: (data: string) => void): TelnetClient;
@@ -71,7 +82,10 @@ export class TelnetClient {
     this.emitter.emit(TelnetEvent.close, hadError);
   };
   private onData = (data: Buffer): void => {
-    this.emitter.emit(TelnetEvent.data, data.toString());
+    const lines = data.toString().trim().split('\r\n');
+    for (const line of lines) {
+      this.emitter.emit(TelnetEvent.data, line);
+    }
   };
 
   private newSocket(): void {
@@ -88,12 +102,14 @@ export class TelnetClient {
 
     const oldOne = this.socket;
     this.socket = undefined;
-
-    oldOne.removeListener('error', this.onError);
-    oldOne.removeListener('connect', this.onConnect);
-    oldOne.removeListener('close', this.onClose);
     oldOne.removeListener('data', this.onData);
-    oldOne.end(() => oldOne.destroy());
+    oldOne.removeListener('close', this.onClose);
+    oldOne.removeListener('connect', this.onConnect);
+
+    oldOne.end(() => {
+      oldOne.removeListener('error', this.onError);
+      oldOne.destroy().unref();
+    });
   }
 
   private tryReconnect(): void {

@@ -85,6 +85,15 @@ export class YeelightDevice implements Device {
     }
   }
 
+  connect(): Device {
+    this.client.connect();
+    return this;
+  }
+  disconnect(): Device {
+    this.client.disconnect();
+    return this;
+  }
+
   private execute(command: Command): void {
     this.commands.add(command);
     this.client.send(command.data);
